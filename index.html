@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#fcfaf6" id="metaTheme">
 <title>Conversor de Receitas</title>
 <link rel="manifest" href="manifest.json">
@@ -47,6 +47,7 @@
     --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1);
     --shadow-menu: 0 8px 24px rgba(24,24,27,.22);
     --shadow-modal: 0 25px 50px -12px rgba(0,0,0,.4);
+    --nav-h: calc(86px + env(safe-area-inset-bottom));
   }
   .dark{
     --bg-app: 9 9 11;
@@ -75,7 +76,11 @@
     font-size:14px; line-height:1.5;
     -webkit-font-smoothing:antialiased;
     -webkit-tap-highlight-color:transparent;
+    touch-action: manipulation;          /* sem zoom por toque duplo */
+    -webkit-text-size-adjust:100%; text-size-adjust:100%;
+    padding-bottom: var(--nav-h);
   }
+  html{ touch-action: manipulation; }
   /* Halos suaves só no tema claro */
   html:not(.dark) body{
     background-image:
@@ -103,23 +108,31 @@
     display:flex; align-items:center; justify-content:space-between;
   }
   .brand{ display:flex; align-items:center; min-width:0; }
-  .logo-grid{
-    display:grid; grid-template-columns:1fr 1fr; grid-gap:3px;
-    width:40px; height:40px; padding:7px; border-radius:var(--radius-lg);
-    background-color: rgb(var(--bg-surface-2)); flex-shrink:0; margin-right:12px;
+  .app-logo{
+    width:40px; height:40px; border-radius:var(--radius-lg); flex-shrink:0; margin-right:12px;
+    display:flex; align-items:center; justify-content:center;
+    background-color: var(--amber-400); color: #18181b;
   }
-  .logo-grid span{ border-radius:3px; }
+  .app-logo svg{ width:24px; height:24px; stroke-width:2.2; }
   .app-title{ font-size:22px; font-weight:800; letter-spacing:-.02em; line-height:1.1; }
   .app-sub{ font-size:13px; color: rgb(var(--text-secondary)); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
   .icon-btn{
     display:inline-flex; align-items:center; justify-content:center;
-    width:40px; height:40px; border-radius:var(--radius-md);
+    width:44px; height:44px; border-radius:var(--radius-md);
     color: rgb(var(--text-secondary));
   }
 
   /* ===== Faixa de abas ===== */
-  .tabs-wrap{ max-width:720px; margin:0 auto; padding:12px 16px 0; }
+  .tabs-wrap{
+    position:fixed; left:0; right:0; bottom:0; z-index:30;
+    padding:8px 12px calc(8px + env(safe-area-inset-bottom));
+    background-color: rgb(var(--bg-app) / .88);
+    -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    border-top:1px solid rgb(var(--border-default));
+    -webkit-user-select:none; user-select:none;
+  }
+  .tabs-wrap .main-tabs{ max-width:720px; margin:0 auto; }
   .main-tabs{
     display:flex; padding:5px;
     border:1px solid rgb(var(--border-default)); border-radius:var(--radius-xl);
@@ -128,7 +141,7 @@
   .main-tab-btn{
     flex:1 1 0; min-width:0; margin:0 2px;
     display:flex; flex-direction:column; align-items:center;
-    padding:9px 4px 8px; border-radius:var(--radius-lg);
+    padding:9px 4px 8px; min-height:56px; border-radius:var(--radius-lg);
     font-size:12px; font-weight:600; color: rgb(var(--text-muted));
     box-shadow: inset 0 -2px 0 transparent;
     transition: background-color .15s, color .15s, box-shadow .15s;
@@ -136,12 +149,12 @@
   .main-tab-btn svg{ margin-bottom:5px; }
   .main-tab-btn.active{
     color: rgb(var(--text-primary)); background-color: rgb(var(--bg-surface-2));
-    box-shadow: inset 0 -2px 0 var(--amber-500);
+    box-shadow: inset 0 2px 0 var(--amber-500);   /* indicador em cima: a barra está no rodapé */
   }
   .main-tab-btn.active svg{ color: var(--amber-500); }
 
   /* ===== Conteúdo ===== */
-  main{ max-width:720px; margin:0 auto; padding:16px 16px 32px; }
+  main{ max-width:720px; margin:0 auto; padding:16px 16px 24px; }
   .view{ -webkit-animation: fadeIn .35s ease both; animation: fadeIn .35s ease both; }
   @-webkit-keyframes fadeIn{ from{ opacity:0; -webkit-transform:translateY(8px);} to{ opacity:1; -webkit-transform:none; } }
   @keyframes fadeIn{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:none; } }
@@ -185,8 +198,8 @@
   .btn-block{ display:flex; width:100%; }
   .btn-row{ display:flex; flex-wrap:wrap; margin:-4px; }
   .btn-row > .btn{ flex:1 1 0; margin:4px; }
-  .link-btn{ color: rgb(var(--text-secondary)); font-size:13px; font-weight:500; text-decoration:underline; text-underline-offset:2px; }
-  .back-btn{ display:inline-flex; align-items:center; color: rgb(var(--text-secondary)); font-size:13px; font-weight:500; padding:6px 8px 6px 4px; margin:0 0 8px -4px; border-radius:var(--radius-md); }
+  .link-btn{ display:inline-block; padding:10px 4px; color: rgb(var(--text-secondary)); font-size:13px; font-weight:500; text-decoration:underline; text-underline-offset:2px; }
+  .back-btn{ display:inline-flex; align-items:center; min-height:40px; color: rgb(var(--text-secondary)); font-size:14px; font-weight:500; padding:6px 10px 6px 4px; margin:0 0 8px -4px; border-radius:var(--radius-md); }
   .back-btn svg{ margin-right:4px; }
 
   /* ===== Campos ===== */
@@ -197,7 +210,7 @@
     width:100%; min-height:44px; padding:10px 14px;
     border:1px solid rgb(var(--border-default)); border-radius:var(--radius-lg);
     background-color: rgb(var(--bg-input) / .6); color: rgb(var(--text-primary));
-    font-size:15px; outline:none; transition: border-color .15s ease; -webkit-appearance:none; appearance:none;
+    font-size:16px; outline:none; transition: border-color .15s ease; -webkit-appearance:none; appearance:none;
   }
   .input-field::-webkit-input-placeholder{ color: rgb(var(--text-muted)); }
   .input-field::placeholder{ color: rgb(var(--text-muted)); }
@@ -330,21 +343,31 @@
   .ing-form .f-qty{ flex:0 0 32%; }
   .ing-form .f-unit{ flex:1 1 0; }
   .ing-form .bottom{ display:flex; align-items:center; flex-wrap:wrap; margin-top:10px; font-size:13px; color: rgb(var(--text-secondary)); }
-  .check-label{ display:inline-flex; align-items:center; cursor:pointer; margin-right:12px; min-height:32px; }
-  .check-label input{ width:18px; height:18px; margin:0 8px 0 0; accent-color: var(--emerald-500); }
+  .check-label{ display:inline-flex; align-items:center; cursor:pointer; margin-right:12px; min-height:44px; }
+  .check-label input{
+    -webkit-appearance:none; appearance:none; flex-shrink:0;
+    width:22px; height:22px; margin:0 10px 0 0; border-radius:7px; cursor:pointer;
+    border:2px solid rgb(var(--border-hover)); background-color: rgb(var(--bg-input) / .6);
+    background-repeat:no-repeat; background-position:center; background-size:14px 14px;
+    transition: background-color .15s, border-color .15s;
+  }
+  .check-label input:checked{
+    background-color: rgb(var(--success)); border-color: rgb(var(--success));
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  }
   .peso-wrap{ display:inline-flex; align-items:center; margin-right:8px; }
-  .peso-wrap .input-field{ width:76px; min-height:34px; padding:6px 10px; font-size:14px; margin:0 6px; }
-  .del-mini{ margin-left:auto; width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center; border-radius:var(--radius-md); color: rgb(var(--text-muted)); }
+  .peso-wrap .input-field{ width:80px; min-height:40px; padding:6px 10px; font-size:16px; margin:0 6px; }
+  .del-mini{ margin-left:auto; width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center; border-radius:var(--radius-md); color: rgb(var(--text-muted)); }
   .step-form{ display:flex; align-items:flex-start; margin-bottom:8px; }
   .step-form .step-n{ margin-top:10px; }
   .step-form textarea{ flex:1; }
-  .step-form .del-mini{ margin-left:4px; margin-top:5px; }
+  .step-form .del-mini{ margin-left:2px; margin-top:0; }
   .add-btn{
     display:flex; align-items:center; justify-content:center; width:100%; min-height:42px;
     border:1px dashed rgb(var(--border-hover)); border-radius:var(--radius-lg); font-size:13px; font-weight:500; color: rgb(var(--text-secondary));
   }
   .add-btn svg{ margin-right:6px; }
-  .form-actions{ position:sticky; bottom:0; padding:12px 0 calc(12px + env(safe-area-inset-bottom)); margin-top:16px;
+  .form-actions{ position:sticky; bottom:var(--nav-h); z-index:5; padding:12px 0; margin-top:16px;
     background-image: linear-gradient(to top, rgb(var(--bg-app)) 70%, rgb(var(--bg-app) / 0)); }
 
   /* ===== Backup ===== */
@@ -373,11 +396,11 @@
   }
 
   /* ===== Rodapé ===== */
-  footer{ max-width:720px; margin:0 auto; padding:16px 16px calc(24px + env(safe-area-inset-bottom)); text-align:center; font-size:12px; color: rgb(var(--text-muted)); border-top:1px solid rgb(var(--border-default)); }
+  footer{ max-width:720px; margin:0 auto; padding:16px 16px 20px; text-align:center; font-size:12px; color: rgb(var(--text-muted)); border-top:1px solid rgb(var(--border-default)); }
 
   /* ===== Toast ===== */
   .toast{
-    position:fixed; left:50%; bottom:calc(20px + env(safe-area-inset-bottom)); z-index:60;
+    position:fixed; left:50%; bottom:calc(var(--nav-h) + 12px); z-index:60;
     -webkit-transform:translate(-50%, 12px); transform:translate(-50%, 12px); opacity:0; pointer-events:none;
     max-width:calc(100% - 32px); padding:10px 16px; border-radius:var(--radius-lg);
     background-color: rgb(var(--bg-surface)); color: rgb(var(--text-primary));
@@ -393,7 +416,7 @@
   .modal-overlay{ position:fixed; top:0; left:0; right:0; bottom:0; z-index:70; background-color: rgba(0,0,0,.5); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
     display:flex; align-items:flex-end; justify-content:center; padding:16px; }
   .modal-panel{ width:100%; max-width:30rem; background-color: rgb(var(--bg-surface)); border:1px solid rgb(var(--border-default)); border-radius:var(--radius-xl); box-shadow: var(--shadow-modal);
-    -webkit-animation: fadeIn .2s ease both; animation: fadeIn .2s ease both; margin-bottom: env(safe-area-inset-bottom); }
+    -webkit-animation: fadeIn .2s ease both; animation: fadeIn .2s ease both; margin-bottom: env(safe-area-inset-bottom); max-height:calc(100vh - 32px); overflow:auto; }
   .modal-head{ padding:16px 18px 0; font-size:16px; font-weight:700; }
   .modal-body{ padding:8px 18px 16px; font-size:14px; color: rgb(var(--text-secondary)); }
   .modal-foot{ display:flex; justify-content:flex-end; padding:12px 18px; border-top:1px solid rgb(var(--border-default)); }
@@ -407,10 +430,7 @@
 <header class="app-header">
   <div class="header-inner">
     <div class="brand">
-      <div class="logo-grid" aria-hidden="true">
-        <span style="background:#fbbf24"></span><span style="background:#34d399"></span>
-        <span style="background:#60a5fa"></span><span style="background:#f472b6"></span>
-      </div>
+      <div class="app-logo" aria-hidden="true" id="appLogo"></div>
       <div style="min-width:0">
         <h1 class="app-title">Receitas</h1>
         <div class="app-sub">Suas receitas, na medida certa</div>
@@ -438,10 +458,10 @@
 
 <script>
 /* =====================================================================
-   Conversor de Receitas — v2.0.0
+   Conversor de Receitas — v2.1.0
    Design: Waypoint. Sem dependências, funciona offline (PWA).
    ===================================================================== */
-var APP_VERSION = '2.0.0';
+var APP_VERSION = '2.1.0';
 var STORE_KEY = 'receitas_app_v1';      /* mesma chave da v1: dados antigos continuam */
 var THEME_KEY = 'receitas_tema';
 var EXPORT_KEY = 'receitas_ultimo_backup';
@@ -469,6 +489,7 @@ var ICONS = {
   'alert':    '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/>',
   'info':     '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
   'rotate':   '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+  'cup':      '<path d=\"M3 4h14.5l-1.6 15.2A2 2 0 0 1 13.9 21H7.1a2 2 0 0 1-2-1.8L3.6 6.5 2 4.5\"/><path d=\"M17.2 7.5h1.8a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2.5\"/><path d=\"M8 9h4M8 12.5h1.2M8 16h4\"/>',
   'folder':   '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>'
 };
 function ico(name, cls){
@@ -735,16 +756,39 @@ function renderTabs(){
   }
 }
 function formSujo(){ return state.view === 'form' && state.form && state.form.dirty; }
-function go(view, params, skipGuard){
+/* hist: undefined = nova entrada no histórico, 'replace' = troca a atual, 'pop' = veio do botão voltar */
+function go(view, params, skipGuard, hist){
   if (!skipGuard && formSujo()){
-    confirmModal({ title: 'Descartar alterações?', text: 'A receita que você está editando não foi salva.', ok: 'Descartar', danger: true }, function(){ state.form.dirty = false; go(view, params, true); });
+    confirmModal({ title: 'Descartar alterações?', text: 'A receita que você está editando não foi salva.', ok: 'Descartar', danger: true }, function(){ state.form.dirty = false; go(view, params, true, hist); });
     return;
   }
   state.view = view;
   if (params) for (var k in params) state[k] = params[k];
+  if (hist !== 'pop'){
+    var entry = { v: view, t: state.topic, r: state.recipeId };
+    try { if (hist === 'replace') history.replaceState(entry, ''); else history.pushState(entry, ''); } catch(e){}
+  }
   render();
   window.scrollTo(0, 0);
 }
+/* Botão voltar do Android: navega dentro do app em vez de fechá-lo */
+function modalAberto(){ return !!document.getElementById('modalOverlay'); }
+window.addEventListener('popstate', function(e){
+  var atual = { v: state.view, t: state.topic, r: state.recipeId };
+  if (modalAberto()){ document.getElementById('modalRoot').innerHTML = ''; try { history.pushState(atual, ''); } catch(x){} return; }
+  if (formSujo()){
+    try { history.pushState(atual, ''); } catch(x){}
+    confirmModal({ title: 'Descartar alterações?', text: 'A receita que você está editando não foi salva.', ok: 'Descartar', danger: true },
+      function(){ state.form.dirty = false; history.back(); });
+    return;
+  }
+  var s = e.state || { v: 'home' };
+  var v = s.v;
+  if (v === 'form' && !state.form) v = 'home';
+  if (v === 'detail' && !getRecipe(s.r)) v = 'home';
+  if (v === 'detail' && s.r !== state.recipeId){ state.checklist = {}; state.scale = { mode: 'rendimento', yieldVal: '', refId: null, haveVal: '' }; }
+  go(v, { topic: s.t || null, recipeId: s.r || null }, true, 'pop');
+});
 (function(){
   var btns = document.querySelectorAll('#mainTabs .main-tab-btn');
   for (var i = 0; i < btns.length; i++){
@@ -1059,7 +1103,7 @@ function salvarFormulario(){
   if (!saveData()){ state.recipes = JSON.parse(backup); return; }
   f.dirty = false;
   toast(f.id ? 'Receita atualizada' : 'Receita salva');
-  go('detail', { recipeId: r.id, checklist: {}, scale: { mode: 'rendimento', yieldVal: '', refId: null, haveVal: '' }, form: null }, true);
+  go('detail', { recipeId: r.id, checklist: {}, scale: { mode: 'rendimento', yieldVal: '', refId: null, haveVal: '' }, form: null }, true, 'replace');
 }
 
 /* --- Backup --- */
@@ -1275,7 +1319,7 @@ function acao(act, el){
         var antes = JSON.stringify(state.recipes);
         state.recipes = state.recipes.filter(function(x){ return x.id !== r.id; });
         if (!saveData()){ state.recipes = JSON.parse(antes); return; }
-        toast('Receita excluída'); go('home', { recipeId: null });
+        toast('Receita excluída'); go('home', { recipeId: null }, true, 'replace');
       });
       break;
     case 'reset-scale': state.scale.yieldVal = ''; state.scale.haveVal = ''; render(); break;
@@ -1295,7 +1339,7 @@ function acao(act, el){
       f.dirty = true; render(); break;
     case 'remove-photo': f.foto = null; f.dirty = true; render(); break;
     case 'save': salvarFormulario(); break;
-    case 'cancel-edit': go('detail', { recipeId: f.id }); break;
+    case 'cancel-edit': go('detail', { recipeId: f.id }, false, 'replace'); break;
     case 'export': exportarDownload(); break;
     case 'export-share': exportarCompartilhar(); break;
     case 'import-cancel': state.importPreview = null; render(); break;
@@ -1308,9 +1352,13 @@ function acao(act, el){
 }
 
 /* ---------- Inicialização ---------- */
+document.getElementById('appLogo').innerHTML = ico('cup');
 document.getElementById('footer').innerHTML = 'Conversor de Receitas · v' + APP_VERSION;
 applyThemeUI();
+try { history.replaceState({ v: 'home', t: null, r: null }, ''); } catch(e){}
 render();
+function medirBarra(){ var t = document.querySelector('.tabs-wrap'); if (t) document.documentElement.style.setProperty('--nav-h', t.offsetHeight + 'px'); }
+medirBarra(); window.addEventListener('resize', medirBarra);
 try { if (!localStorage.getItem(STORE_KEY)) saveData(); } catch(e){}
 
 if ('serviceWorker' in navigator && location.protocol !== 'file:'){

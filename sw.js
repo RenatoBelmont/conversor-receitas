@@ -1,8 +1,8 @@
-/* Conversor de Receitas — service worker v2.1.0
+/* Conversor de Receitas — service worker v2.1.1
    Rede primeiro: com internet, sempre pega a versão mais nova publicada;
    sem internet, usa a cópia guardada. (A v1 usava cache primeiro e
    nunca mostrava atualizações.) */
-var CACHE = 'receitas-v2.1.0';
+var CACHE = 'receitas-v2.1.1';
 var ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', function (e) {

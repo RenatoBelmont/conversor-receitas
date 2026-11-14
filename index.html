@@ -458,10 +458,10 @@
 
 <script>
 /* =====================================================================
-   Conversor de Receitas — v2.1.0
+   Conversor de Receitas — v2.1.1
    Design: Waypoint. Sem dependências, funciona offline (PWA).
    ===================================================================== */
-var APP_VERSION = '2.1.0';
+var APP_VERSION = '2.1.1';
 var STORE_KEY = 'receitas_app_v1';      /* mesma chave da v1: dados antigos continuam */
 var THEME_KEY = 'receitas_tema';
 var EXPORT_KEY = 'receitas_ultimo_backup';
@@ -1118,11 +1118,12 @@ function viewBackup(){
        '<div class="stat"><b>' + fotos + '</b><span>com foto</span></div></div>' +
        '<div class="btn-row"><button class="btn btn-primary" data-act="export"' + (n ? '' : ' disabled') + '>' + ico('download') + 'Baixar .json</button>' +
        (podeCompartilharArquivo() ? '<button class="btn btn-ghost" data-act="export-share"' + (n ? '' : ' disabled') + '>' + ico('share') + 'Enviar</button>' : '') + '</div>' +
+       (podeCompartilharArquivo() ? '<div class="hint">"Enviar" abre o compartilhamento do Android (WhatsApp, Drive, Bluetooth…). O arquivo vai como .txt — o Android não envia .json — e importa normalmente.</div>' : '') +
        '<div class="hint">' + (ult ? 'Último backup: ' + esc(fmtData(parseInt(ult, 10))) : 'Nenhum backup feito ainda.') + '</div></div>';
 
   h += '<div class="card card-pad"><div class="card-title">Importar</div>' +
-       '<div class="hint" style="margin:6px 0 12px">Escolha um arquivo .json exportado por este app.</div>' +
-       '<label class="btn btn-ghost btn-block file-btn">' + ico('upload') + 'Escolher arquivo<input type="file" accept=".json,application/json" id="importInput"></label>';
+       '<div class="hint" style="margin:6px 0 12px">Escolha um backup exportado por este app (.json ou .txt).</div>' +
+       '<label class="btn btn-ghost btn-block file-btn">' + ico('upload') + 'Escolher arquivo<input type="file" accept=".json,.txt,application/json,text/plain" id="importInput"></label>';
   var p = state.importPreview;
   if (p){
     h += '<div class="import-preview section-group">' +
@@ -1145,8 +1146,13 @@ function montarExport(){
 }
 function nomeArquivo(){ return 'receitas-backup-' + hojeISO() + '.json'; }
 function marcarBackup(){ try { localStorage.setItem(EXPORT_KEY, String(Date.now())); } catch(e){} }
+/* O Chrome do Android só compartilha arquivos de uma lista fixa de tipos — .json NÃO está nela.
+   Por isso o backup é enviado como texto (.txt), com o mesmo conteúdo JSON; a importação aceita os dois. */
+function arquivoParaEnviar(){
+  return new File([montarExport()], 'receitas-backup-' + hojeISO() + '.txt', { type: 'text/plain' });
+}
 function podeCompartilharArquivo(){
-  try { return !!(navigator.canShare && window.File && navigator.canShare({ files: [new File(['{}'], 'x.json', { type: 'application/json' })] })); } catch(e){ return false; }
+  try { return !!(navigator.share && navigator.canShare && window.File && navigator.canShare({ files: [new File(['{}'], 'teste.txt', { type: 'text/plain' })] })); } catch(e){ return false; }
 }
 function exportarDownload(){
   var blob = new Blob([montarExport()], { type: 'application/json' });
@@ -1158,8 +1164,18 @@ function exportarDownload(){
   marcarBackup(); toast('Backup baixado'); render();
 }
 function exportarCompartilhar(){
-  var file = new File([montarExport()], nomeArquivo(), { type: 'application/json' });
-  navigator.share({ files: [file], title: 'Backup de receitas' }).then(function(){ marcarBackup(); render(); }).catch(function(){});
+  var file = arquivoParaEnviar();
+  if (!(navigator.canShare && navigator.canShare({ files: [file] }))){
+    toast('Este aparelho não permite enviar o arquivo. Baixando em vez disso.', 'err');
+    exportarDownload(); return;
+  }
+  navigator.share({ files: [file], title: 'Backup de receitas', text: 'Backup do Conversor de Receitas' })
+    .then(function(){ marcarBackup(); toast('Backup enviado'); render(); })
+    .catch(function(e){
+      if (e && e.name === 'AbortError') return;          /* a pessoa fechou a janela de compartilhar */
+      toast('Não foi possível abrir o compartilhamento. Baixando o arquivo.', 'err');
+      exportarDownload();
+    });
 }
 function lerImport(file){
   var reader = new FileReader();

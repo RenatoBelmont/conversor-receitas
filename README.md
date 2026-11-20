@@ -12,7 +12,8 @@ No Chrome do Android, use ⋮ → *Instalar aplicativo*.
 - Itens contáveis nunca saem fracionados; quando o arredondamento pesa, o app mostra o peso equivalente em gramas
 - Receitas divididas em **partes** (massa, recheio, cobertura…)
 - **Duplicar** receita para criar variações
-- **PDF**, impressão e envio como texto, sempre com as quantidades convertidas
+- **PDF** e impressão em ficha ilustrada (foto, tempos, ingredientes em duas colunas, dicas), sempre com as quantidades convertidas
+- Tempo de preparo, tempo de cozimento e dicas (opcionais)
 - Backup em arquivo `.json` e no **Google Drive** ([configuração](docs/google-drive.md))
 - Funciona offline; temas claro e escuro
 
@@ -25,6 +26,7 @@ No Chrome do Android, use ⋮ → *Instalar aplicativo*.
 | `sw.js` | Service worker (funcionamento offline e atualizações) |
 | `manifest.json`, `icon-*.png` | Instalação como app |
 | `vendor/jspdf.umd.min.js` | [jsPDF](https://github.com/parallax/jsPDF) 4.2.1 (MIT), usado para gerar os PDFs |
+| `vendor/fonts/Lora-*.ttf` | Fonte [Lora](https://github.com/cyrealtype/Lora-Cyrillic) (SIL OFL 1.1), usada no PDF e na impressão |
 | `docs/google-drive.md` | Passo a passo da API do Google Drive |
 
 A versão atual aparece no rodapé do app e em `APP_VERSION`, no `index.html`.

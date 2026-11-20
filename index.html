@@ -277,6 +277,10 @@
   /* ===== Badges ===== */
   .badge{ display:inline-flex; align-items:center; border-radius:var(--radius-full); padding:4px 10px; font-size:12px; font-weight:500; margin:0 6px 6px 0;
     border:1px solid rgb(var(--border-default)); background-color: rgb(var(--bg-surface-2)); color: rgb(var(--text-secondary)); }
+  .badge svg.i-xs{ width:13px; height:13px; margin-right:5px; color: rgb(var(--text-muted)); }
+  .field-label .opt{ font-weight:500; color: rgb(var(--text-muted)); }
+  .tips-card{ border-color: rgb(var(--amber-500-rgb) / .3); background-color: rgb(var(--amber-500-rgb) / .05); }
+  .tips-text{ margin:8px 0 0; white-space:pre-wrap; font-size:14px; line-height:1.6; color: rgb(var(--text-secondary)); }
   .badge-amber{ border-color: rgb(var(--amber-500-rgb) / .35); background-color: rgb(var(--amber-500-rgb) / .12); color: rgb(var(--text-primary)); font-weight:600; }
   .badge-ok{ border-color: transparent; background-color: rgb(var(--success) / .12); color: rgb(var(--success)); }
 
@@ -418,22 +422,49 @@
   .sheet-item b{ display:block; font-size:15px; }
   .sheet-item small{ display:block; font-size:12px; color: rgb(var(--text-secondary)); margin-top:1px; }
 
-  /* ===== Impressão: só a receita, sempre em tema claro ===== */
+  /* ===== Impressão: ficha no mesmo layout do PDF ===== */
+  @font-face{ font-family:'LoraFicha'; src:url('vendor/fonts/Lora-Regular.ttf') format('truetype'); font-weight:400; font-style:normal; }
+  @font-face{ font-family:'LoraFicha'; src:url('vendor/fonts/Lora-Italic.ttf') format('truetype'); font-weight:400; font-style:italic; }
+  @font-face{ font-family:'LoraFicha'; src:url('vendor/fonts/Lora-SemiBold.ttf') format('truetype'); font-weight:600; font-style:normal; }
+  #printSheet{ display:none; }
   @media print{
-    :root, .dark{ --bg-app:255 255 255; --bg-surface:255 255 255; --bg-surface-2:255 255 255; --border-default:210 204 192; --text-primary:0 0 0; --text-secondary:60 60 60; --text-muted:110 110 110; --shadow-card:none; }
-    html body{ background:#fff !important; padding:0 !important; color:#000; }
-    .app-header, .tabs-wrap, footer, .toast, #modalRoot, .back-btn, .btn-row, .seg, .field, .factor-line .link-btn,
-    .progress-track, .ing-list + .hint, #ingCard > .hint, .ing-check, .photo-remove{ display:none !important; }
-    main{ max-width:none; padding:0; }
-    .view{ animation:none !important; -webkit-animation:none !important; }
-    .card{ border:none !important; box-shadow:none !important; padding:0 !important; margin-top:14px !important; background:none !important; -webkit-backdrop-filter:none; backdrop-filter:none; }
-    .card-title{ font-size:18px; }
-    .card:first-of-type .card-title{ display:none; }
-    .ing-item.done .ing-qty, .ing-item.done .ing-name{ text-decoration:none; color:#000; }
-    .ing-item{ padding:5px 0; }
-    .steps li, .ing-list li{ break-inside:avoid; page-break-inside:avoid; }
-    .photo-wrap{ max-width:60%; }
-    .badge{ border:none; padding-left:0; background:none; }
+    @page{ size:A4; margin:8mm; }
+    html, body{ background:#FBF5F0 !important; padding:0 !important; }
+    body > *:not(#printSheet){ display:none !important; }
+    #printSheet{ display:block; }
+    .ps{ -webkit-box-decoration-break:clone; box-decoration-break:clone; font-family:'LoraFicha', Georgia, 'Times New Roman', serif; color:#4E433D; background:#FBF5F0; border:1px solid #CDAE9C; border-radius:18px;
+      padding:12mm 12mm 8mm; -webkit-print-color-adjust:exact; print-color-adjust:exact; font-size:10.5pt; line-height:1.45; }
+    .ps-head{ display:flex; align-items:flex-start; margin-bottom:9mm; }
+    .ps-hl{ flex:1; min-width:0; }
+    .ps-topic{ font-size:8.5pt; letter-spacing:.15em; text-transform:uppercase; color:#C27B5D; }
+    .ps h1{ font-weight:400; font-size:28pt; line-height:1.1; color:#5B4A42; margin:2mm 0 0; }
+    .ps-swash{ display:block; width:60%; max-width:95mm; height:3.2mm; margin:1.5mm 0 4mm; }
+    .ps-swash path{ fill:none; stroke:#A3B08B; stroke-width:2.6; stroke-linecap:round; }
+    .ps-pills{ display:flex; flex-wrap:wrap; }
+    .ps-pill{ display:inline-flex; align-items:center; background:#F6E0D4; color:#8A5A46; border-radius:99px; padding:1.4mm 3.5mm 1.4mm 2.6mm; margin:0 2.5mm 2mm 0; font-size:9.5pt; }
+    .ps-pill svg{ width:4.2mm; height:4.2mm; margin-right:1.6mm; color:#C27B5D; }
+    .ps-adj{ font-style:italic; font-size:9pt; color:#C27B5D; margin-top:1mm; }
+    .ps-photo{ width:62mm; height:52mm; flex-shrink:0; margin-left:8mm; padding:2mm; border:1px dashed #CDAE9C; border-radius:5mm; }
+    .ps-photo img{ width:100%; height:100%; object-fit:cover; border-radius:4mm; display:block; }
+    .ps-sec{ position:relative; border:1px solid; border-radius:5mm; padding:9mm 6mm 4mm; margin:9mm 0 0; }
+    .ps-sec h2{ position:absolute; top:-5mm; left:3mm; margin:0; height:10mm; line-height:10mm; padding:0 8mm; border-radius:5mm; color:#fff; font-weight:400; font-size:14pt; }
+    .ps-sec-g{ border-color:#AFBB9C; } .ps-sec-g h2{ background:#A3B08B; }
+    .ps-sec-b{ border-color:#AEBCC9; } .ps-sec-b h2{ background:#94A6B6; }
+    .ps-part{ font-weight:600; font-size:9pt; letter-spacing:.08em; text-transform:uppercase; margin:2mm 0 1mm; }
+    .ps-part.ps-g{ color:#738560; } .ps-part.ps-b{ color:#677D91; }
+    .ps-ing{ list-style:none; margin:0 0 2mm; padding:0; columns:2; column-gap:8mm; }
+    .ps-ing li{ display:flex; break-inside:avoid; page-break-inside:avoid; padding:1.2mm 0; border-bottom:.6pt solid #E4D7CE; }
+    .ps-box{ width:3.4mm; height:3.4mm; border:.8pt solid #9B8A80; border-radius:.8mm; flex-shrink:0; margin:1mm 3mm 0 0; }
+    .ps-ing b{ font-weight:600; color:#5B4A42; }
+    .ps-ing small{ display:block; font-style:italic; font-size:8pt; color:#9A8A80; }
+    .ps-ing small.w{ color:#C27B5D; }
+    .ps-steps{ list-style:none; margin:0 0 2mm; padding:0; }
+    .ps-steps li{ display:flex; align-items:flex-start; break-inside:avoid; page-break-inside:avoid; padding:1.6mm 0; border-bottom:.6pt solid #E4D7CE; }
+    .ps-n{ width:7mm; height:7mm; border-radius:50%; background:#94A6B6; color:#fff; font-weight:600; font-size:9.5pt; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-right:4mm; }
+    .ps-tips{ display:flex; background:#F6E0D4; border-radius:6mm; padding:5mm 6mm; margin-top:9mm; break-inside:avoid; page-break-inside:avoid; }
+    .ps-tips h3{ width:46mm; flex-shrink:0; margin:0 6mm 0 0; padding-right:6mm; border-right:.8pt solid #CDAE9C; font-weight:400; font-style:italic; font-size:12.5pt; color:#8A5A46; }
+    .ps-tips p{ margin:0; white-space:pre-wrap; font-size:10pt; }
+    .ps-foot{ text-align:center; font-style:italic; font-size:8pt; color:#9A8A80; margin-top:7mm; }
   }
 
   /* ===== Backup ===== */
@@ -522,14 +553,15 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div id="modalRoot"></div>
+<div id="printSheet" aria-hidden="true"></div>
 
 <script src="config.js"></script>
 <script>
 /* =====================================================================
-   Conversor de Receitas — v2.3.1
+   Conversor de Receitas — v2.4.0
    Design: Waypoint. Sem dependências, funciona offline (PWA).
    ===================================================================== */
-var APP_VERSION = '2.3.1';
+var APP_VERSION = '2.4.0';
 var STORE_KEY = 'receitas_app_v1';      /* mesma chave da v1: dados antigos continuam */
 var THEME_KEY = 'receitas_tema';
 var EXPORT_KEY = 'receitas_ultimo_backup';
@@ -568,6 +600,8 @@ var ICONS = {
   'printer':  '<path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/>',
   'message':  '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
   'log-out':  '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+  'clock':    '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  'flame':    '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
   'folder':   '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>'
 };
 function ico(name, cls){
@@ -728,6 +762,9 @@ function normalizarReceita(r){
     rendimentoQtd: isFinite(rq) && rq > 0 ? rq : 1,
     rendimentoUnidade: String(r.rendimentoUnidade || '').trim() || 'porções',
     partes: partes,
+    tempoPreparo: String(r.tempoPreparo || '').trim().slice(0, 40),
+    tempoCozimento: String(r.tempoCozimento || '').trim().slice(0, 40),
+    dicas: String(r.dicas || '').trim(),
     createdAt: isFinite(criado) ? criado : Date.now(),
     updatedAt: isFinite(parseNum(r.updatedAt)) ? parseNum(r.updatedAt) : (isFinite(criado) ? criado : Date.now())
   };
@@ -1025,7 +1062,9 @@ function viewDetail(){
   if (r.foto) h += '<div class="photo-wrap"><img src="' + r.foto + '" alt=""></div>';
   h += '<h2 class="recipe-title">' + esc(r.nome) + '</h2>';
   h += '<div><span class="badge"><span class="topic-dot" style="background:' + topicColor(r.topico) + ';margin:0 6px 0 0"></span>' + esc(r.topico) + '</span>' +
-       '<span class="badge">Rende ' + fmtNum(r.rendimentoQtd) + ' ' + esc(r.rendimentoUnidade) + '</span></div>';
+       (r.tempoPreparo ? '<span class="badge">' + ico('clock', 'i-xs') + 'Preparo: ' + esc(r.tempoPreparo) + '</span>' : '') +
+       (r.tempoCozimento ? '<span class="badge">' + ico('flame', 'i-xs') + 'Cozimento: ' + esc(r.tempoCozimento) + '</span>' : '') +
+       '<span class="badge">' + ico('utensils', 'i-xs') + 'Rende ' + fmtNum(r.rendimentoQtd) + ' ' + esc(r.rendimentoUnidade) + '</span></div>';
 
   /* Conversão */
   h += '<div class="card card-pad" style="margin-top:10px">';
@@ -1062,6 +1101,8 @@ function viewDetail(){
           '<ol class="steps">' + p.passos.map(function(t, i){ return '<li><span class="step-n">' + (i + 1) + '</span><span>' + esc(t) + '</span></li>'; }).join('') + '</ol>';
       }).join('') + '</div>';
   }
+
+  if (r.dicas) h += '<div class="card card-pad tips-card"><div class="card-title">Dicas e observações</div><p class="tips-text">' + esc(r.dicas) + '</p></div>';
 
   h += '<div class="btn-row two-col" style="margin-top:14px">' +
        '<button class="btn btn-ghost" data-act="edit">' + ico('pencil') + 'Editar</button>' +
@@ -1134,6 +1175,7 @@ function abrirFormulario(id, clonar){
   var form;
   if (r){
     form = { id: r.id, nome: r.nome, topico: r.topico, rendQtd: fmtNum(r.rendimentoQtd), rendUnid: r.rendimentoUnidade, foto: r.foto,
+      tPrep: r.tempoPreparo || '', tCoz: r.tempoCozimento || '', dicas: r.dicas || '',
       partes: r.partes.map(function(p){
         return { id: p.id, nome: p.nome,
           ingredientes: p.ingredientes.length ? p.ingredientes.map(ingParaForm) : [novoIngForm()],
@@ -1148,7 +1190,7 @@ function abrirFormulario(id, clonar){
       });
     }
   } else {
-    form = { id: null, nome: '', topico: '', rendQtd: '', rendUnid: '', foto: null, partes: [novaParteForm('')], dirty: false, erros: {} };
+    form = { id: null, nome: '', topico: '', rendQtd: '', rendUnid: '', foto: null, tPrep: '', tCoz: '', dicas: '', partes: [novaParteForm('')], dirty: false, erros: {} };
   }
   if (formSujo()){
     confirmModal({ title: 'Descartar alterações?', text: 'A receita que você está editando não foi salva.', ok: 'Descartar', danger: true }, function(){ go('form', { form: form }, true); });
@@ -1178,6 +1220,10 @@ function viewForm(){
     '<div class="field"><div class="row2">' +
       '<div><label class="field-label" for="fRendQtd">Rendimento</label><input class="input-field' + (e.rendQtd ? ' invalid' : '') + '" id="fRendQtd" data-f="rendQtd" type="text" inputmode="decimal" value="' + esc(f.rendQtd) + '" placeholder="ex.: 20"></div>' +
       '<div><label class="field-label" for="fRendUnid">Unidade</label><input class="input-field" id="fRendUnid" data-f="rendUnid" value="' + esc(f.rendUnid) + '" placeholder="suspiros, fatias…"></div>' +
+    '</div></div>' +
+    '<div class="field"><div class="row2">' +
+      '<div><label class="field-label" for="fTPrep">Preparo <span class="opt">opcional</span></label><input class="input-field" id="fTPrep" data-f="tPrep" maxlength="40" value="' + esc(f.tPrep || '') + '" placeholder="ex.: 20 min"></div>' +
+      '<div><label class="field-label" for="fTCoz">Cozimento <span class="opt">opcional</span></label><input class="input-field" id="fTCoz" data-f="tCoz" maxlength="40" value="' + esc(f.tCoz || '') + '" placeholder="ex.: 1h30"></div>' +
     '</div></div></div>';
 
   var multi = f.partes.length > 1;
@@ -1199,6 +1245,9 @@ function viewForm(){
     }).join('');
     h += '<button class="add-btn" data-act="add-part">' + ico('plus', 'i-sm') + 'Adicionar parte</button>';
   }
+
+  h += '<div class="group-label">Dicas e observações <span class="count">opcional</span></div>' +
+       '<textarea class="input-field" id="fDicas" data-f="dicas" rows="3" placeholder="ex.: Se a calda empedrar, aqueça com 1 colher de água.">' + esc(f.dicas || '') + '</textarea>';
 
   h += '<div class="form-actions"><div class="btn-row">' +
        (f.id ? '<button class="btn btn-ghost" data-act="cancel-edit">Cancelar</button>' : '') +
@@ -1294,7 +1343,8 @@ function validarFormulario(){
   if (!totalIng && !msg) msg = 'Adicione ao menos um ingrediente.';
   return { ok: !msg, msg: msg, erros: erros, data: {
     nome: nome, topico: f.topico.trim() || 'Sem categoria', rendimentoQtd: rq, rendimentoUnidade: f.rendUnid.trim() || 'porções',
-    foto: f.foto, partes: partes
+    foto: f.foto, partes: partes,
+    tempoPreparo: String(f.tPrep || '').trim(), tempoCozimento: String(f.tCoz || '').trim(), dicas: String(f.dicas || '').trim()
   } };
 }
 function salvarFormulario(){
@@ -1575,17 +1625,33 @@ function carregarJsPDF(){
 }
 /* As fontes padrão do PDF só têm o alfabeto latino (Windows-1252): acentos do português ok,
    mas símbolos como ≈ e emojis precisam ser trocados para não sair lixo. */
-var CP1252_EXTRA = '€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ';
+/* Fonte Lora (OFL) embutida no PDF: cobre acentos e símbolos como ≈ × °.
+   O que ela não tem (emoji, figuras) é removido para não sair como quadradinho. */
+var PDF_FONTES = [['Lora-Regular.ttf', 'normal'], ['Lora-Italic.ttf', 'italic'], ['Lora-SemiBold.ttf', 'bold']];
+var pdfFontesCache = null;
+function carregarFontesPdf(){
+  if (pdfFontesCache) return pdfFontesCache;
+  pdfFontesCache = Promise.all(PDF_FONTES.map(function(f){
+    return fetch('vendor/fonts/' + f[0]).then(function(r){ if (!r.ok) throw new Error('fonte'); return r.arrayBuffer(); }).then(function(buf){
+      var bytes = new Uint8Array(buf), bin = '', passo = 0x8000;
+      for (var i = 0; i < bytes.length; i += passo) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + passo));
+      return { arquivo: f[0], estilo: f[1], b64: btoa(bin) };
+    });
+  })).catch(function(){ pdfFontesCache = null; return null; });     /* sem fonte: cai para Times */
+  return pdfFontesCache;
+}
 function pdfTexto(s){
   s = String(s == null ? '' : s);
   if (s.normalize) s = s.normalize('NFC');
-  s = s.replace(/≈/g, '~').replace(/[  ]/g, ' ').replace(/[‐‑‒]/g, '-').replace(/→/g, '->');
+  s = s.replace(/[  ]/g, ' ').replace(/[‐‑‒]/g, '-').replace(/→/g, '->');
   var out = '';
   for (var i = 0; i < s.length; i++){
-    var c = s.charAt(i), n = s.charCodeAt(i);
-    if (n >= 0xD800 && n <= 0xDBFF){ i++; continue; }            /* emoji e afins: remove */
-    if ((n >= 32 && n <= 126) || (n >= 160 && n <= 255) || CP1252_EXTRA.indexOf(c) >= 0 || c === '\n') out += c;
-    /* símbolos fora do alfabeto do PDF (emoji, setas…) são removidos */
+    var n = s.charCodeAt(i);
+    if (n >= 0xD800 && n <= 0xDBFF){ i++; continue; }                       /* emoji: remove */
+    if (n === 0xFE0F || n === 0x200D) continue;
+    if (n >= 0x2190 && n !== 0x2248 && n !== 0x2212) continue;               /* setas, figuras, dingbats */
+    if (n < 32 && n !== 10) continue;
+    out += s.charAt(i);
   }
   return out.replace(/ {2,}/g, ' ').replace(/^ +| +$/gm, '');
 }
@@ -1593,91 +1659,232 @@ function nomeArquivoReceita(r, ext){
   var base = norm(r.nome).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50) || 'receita';
   return base + ext;
 }
-function medirImagem(src){
-  return new Promise(function(ok){ var i = new Image(); i.onload = function(){ ok({ w: i.naturalWidth, h: i.naturalHeight }); }; i.onerror = function(){ ok(null); }; i.src = src; });
+/* Recorta a foto para caber na moldura (como "cover") e arredonda os cantos */
+function prepararFoto(src, wmm, hmm, fundo){
+  return new Promise(function(ok){
+    var img = new Image();
+    img.onerror = function(){ ok(null); };
+    img.onload = function(){
+      var W = 720, H = Math.round(W * hmm / wmm), c = document.createElement('canvas');
+      c.width = W; c.height = H;
+      var x = c.getContext('2d'), rr = W * 0.06;
+      x.fillStyle = fundo; x.fillRect(0, 0, W, H);
+      x.beginPath(); x.moveTo(rr, 0); x.arcTo(W, 0, W, H, rr); x.arcTo(W, H, 0, H, rr); x.arcTo(0, H, 0, 0, rr); x.arcTo(0, 0, W, 0, rr); x.closePath(); x.clip();
+      var k = Math.max(W / img.naturalWidth, H / img.naturalHeight), dw = img.naturalWidth * k, dh = img.naturalHeight * k;
+      x.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+      try { ok(c.toDataURL('image/jpeg', 0.88)); } catch(e){ ok(null); }
+    };
+    img.src = src;
+  });
 }
+
+/* Paleta da ficha (inspirada no modelo enviado) */
+var FICHA = {
+  fundo: '#FBF5F0', moldura: '#CDAE9C', titulo: '#5B4A42', texto: '#4E433D', suave: '#9A8A80', regra: '#E4D7CE',
+  verde: '#A3B08B', verdeBorda: '#AFBB9C', verdeTexto: '#738560',
+  azul: '#94A6B6', azulBorda: '#AEBCC9', azulTexto: '#677D91',
+  pessego: '#F6E0D4', terracota: '#C27B5D', terracotaTexto: '#8A5A46', check: '#9B8A80'
+};
+function hexRgb(h){ return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; }
+
 function gerarPdfReceita(r){
   var f = fatorAtual(r), aj = Math.abs(f - 1) > 1e-9;
-  return Promise.all([carregarJsPDF(), r.foto ? medirImagem(r.foto) : Promise.resolve(null)]).then(function(res){
-    var JsPDF = res[0], dimFoto = res[1];
+  var temFoto = !!r.foto, FW = 62, FH = 52;
+  return Promise.all([carregarJsPDF(), carregarFontesPdf(), temFoto ? prepararFoto(r.foto, FW, FH, FICHA.fundo) : Promise.resolve(null)]).then(function(res){
+    var JsPDF = res[0], fontes = res[1], foto = res[2];
     var doc = new JsPDF({ unit: 'mm', format: 'a4', compress: true });
-    var W = 210, H = 297, M = 18, larg = W - 2 * M, y = M, rodape = 14;
-    var COR = { texto: [28, 25, 23], sec: [87, 83, 78], muted: [140, 132, 122], ambar: [180, 110, 5], aviso: [180, 83, 9], linha: [231, 227, 219] };
-    function cor(c){ doc.setTextColor(c[0], c[1], c[2]); }
-    function fonte(est, tam){ doc.setFont('helvetica', est); doc.setFontSize(tam); }
-    function lh(tam){ return tam * 0.3528 * 1.35; }                /* altura de linha em mm */
-    function espaco(alt){ if (y + alt > H - M - rodape){ doc.addPage(); y = M; } }
-    function texto(str, x, est, tam, c, largura){
-      fonte(est, tam); cor(c);
-      var linhas = doc.splitTextToSize(pdfTexto(str), largura || larg);
-      linhas.forEach(function(l){ espaco(lh(tam)); doc.text(l, x, y + lh(tam) * 0.75); y += lh(tam); });
-    }
-    function regua(){ doc.setDrawColor(COR.linha[0], COR.linha[1], COR.linha[2]); doc.setLineWidth(0.3); doc.line(M, y, W - M, y); }
+    var FAM = 'times';
+    if (fontes){ fontes.forEach(function(ft){ doc.addFileToVFS(ft.arquivo, ft.b64); doc.addFont(ft.arquivo, 'Lora', ft.estilo); }); FAM = 'Lora'; }
+    var W = 210, H = 297, M = 20, larg = W - 2 * M, y = 0, LIM = H - 18;
 
-    /* Cabeçalho */
-    texto(r.nome, M, 'bold', 22, COR.texto);
-    y += 1;
-    var meta = r.topico + '   •   ' + (aj ? 'Rende ~' + fmtNum(r.rendimentoQtd * f, 1) : 'Rende ' + fmtNum(r.rendimentoQtd)) + ' ' + r.rendimentoUnidade;
-    texto(meta, M, 'normal', 10, COR.sec);
-    if (aj) texto('Quantidades ajustadas (x' + fmtNum(f) + ' da receita original, que rende ' + fmtNum(r.rendimentoQtd) + ' ' + r.rendimentoUnidade + ')', M, 'italic', 9, COR.ambar);
+    function cor(hx){ var c = hexRgb(hx); doc.setTextColor(c[0], c[1], c[2]); }
+    function tinta(hx){ var c = hexRgb(hx); doc.setFillColor(c[0], c[1], c[2]); }
+    function traco(hx, lw){ var c = hexRgb(hx); doc.setDrawColor(c[0], c[1], c[2]); doc.setLineWidth(lw || 0.3); }
+    function fonte(est, tam){ doc.setFont(FAM, est); doc.setFontSize(tam); }
+    function lh(tam){ return tam * 0.3528 * 1.3; }
+    function quebra(txt, est, tam, w){ fonte(est, tam); return doc.splitTextToSize(pdfTexto(txt), w); }
+    function pintarPagina(){
+      tinta(FICHA.fundo); doc.rect(0, 0, W, H, 'F');
+      traco(FICHA.moldura, 0.45); doc.roundedRect(8, 8, W - 16, H - 16, 6, 6, 'S');
+    }
+    function novaPagina(){ doc.addPage(); pintarPagina(); y = 20; }
+
+    /* ---------- Cabeçalho ---------- */
+    pintarPagina(); y = 22;
+    var largTit = temFoto && foto ? larg - FW - 8 : larg;
+    fonte('normal', 9); cor(FICHA.terracota);
+    doc.text(pdfTexto(r.topico).toUpperCase(), M, y, { charSpace: 0.6 }); y += 4;
+    var titulo = quebra(r.nome, 'normal', 28, largTit).slice(0, 3), tam = titulo.length > 2 ? 23 : 28;
+    if (tam !== 28) titulo = quebra(r.nome, 'normal', tam, largTit).slice(0, 3);
+    fonte('normal', tam); cor(FICHA.titulo);
+    titulo.forEach(function(l){ y += lh(tam) * 0.86; doc.text(l, M, y); });
+    /* traço verde "pincelado" sob o título */
     y += 4;
+    var wTr = Math.min(largTit * 0.62, 95);
+    traco(FICHA.verde, 1.4); doc.setLineCap('round');
+    doc.lines([[wTr * 0.3, -0.9, wTr * 0.7, -0.9, wTr, 0.3]], M + 1, y, [1, 1], 'S');
+    traco(FICHA.verde, 0.7); doc.lines([[wTr * 0.35, -0.4, wTr * 0.7, -0.5, wTr * 0.92, 0.6]], M + 2, y + 0.8, [1, 1], 'S');
+    doc.setLineCap('butt');
+    y += 8;
 
-    /* Foto */
-    if (r.foto && dimFoto && dimFoto.w){
-      var fw = larg, fh = fw * dimFoto.h / dimFoto.w, maxH = 80;
-      if (fh > maxH){ fh = maxH; fw = fh * dimFoto.w / dimFoto.h; }
-      espaco(fh + 4);
-      try { doc.addImage(r.foto, 'JPEG', M, y, fw, fh); y += fh + 6; } catch(e){}
+    /* selos: Preparo / Cozimento / Rende */
+    function icone(tipo, cx, cy){
+      traco(FICHA.terracota, 0.4); tinta(FICHA.terracota);
+      if (tipo === 'relogio'){ doc.circle(cx, cy, 2, 'S'); doc.line(cx, cy, cx, cy - 1.3); doc.line(cx, cy, cx + 1, cy + 0.6); }
+      else if (tipo === 'panela'){
+        doc.lines([[0.5, 2.2, 3.1, 2.2, 3.6, 0]], cx - 1.8, cy - 0.2, [1, 1], 'S'); doc.line(cx - 2.1, cy - 0.2, cx + 2.1, cy - 0.2);
+        [-0.9, 0, 0.9].forEach(function(dx){ doc.lines([[-0.35, -0.4, 0.35, -0.8, 0, -1.3]], cx + dx, cy - 0.8, [1, 1], 'S'); });
+      } else {
+        doc.line(cx - 1.2, cy - 2, cx - 1.2, cy + 2); doc.line(cx - 1.8, cy - 2, cx - 1.8, cy - 0.6); doc.line(cx - 0.6, cy - 2, cx - 0.6, cy - 0.6);
+        doc.lines([[-0.6, -0.3, -0.75, -1.3, 0, -1.8]], cx - 1.8, cy - 0.6, [1, 1], 'S');
+        doc.roundedRect(cx + 0.7, cy - 2, 1.2, 2.3, 0.6, 0.6, 'F'); doc.line(cx + 1.3, cy, cx + 1.3, cy + 2);
+      }
+    }
+    var selos = [];
+    if (r.tempoPreparo) selos.push(['relogio', 'Preparo: ' + r.tempoPreparo]);
+    if (r.tempoCozimento) selos.push(['panela', 'Cozimento: ' + r.tempoCozimento]);
+    selos.push(['talheres', 'Rende: ' + (aj ? '~' + fmtNum(r.rendimentoQtd * f, 1) : fmtNum(r.rendimentoQtd)) + ' ' + r.rendimentoUnidade]);
+    var sx = M, sh = 8.5;
+    fonte('normal', 9.5);
+    selos.forEach(function(s){
+      var tx = pdfTexto(s[1]), w = doc.getTextWidth(tx) + 13;
+      if (sx + w > M + largTit && sx > M){ sx = M; y += sh + 2.5; }
+      tinta(FICHA.pessego); doc.roundedRect(sx, y, w, sh, sh / 2, sh / 2, 'F');
+      icone(s[0], sx + 5, y + sh / 2);
+      fonte('normal', 9.5); cor(FICHA.terracotaTexto); doc.text(tx, sx + 9, y + sh / 2 + 1.2);
+      sx += w + 3;
+    });
+    y += sh;
+    if (aj){
+      y += 5; fonte('italic', 9); cor(FICHA.terracota);
+      quebra('Quantidades ajustadas: ×' + fmtNum(f) + ' da receita original, que rende ' + fmtNum(r.rendimentoQtd) + ' ' + r.rendimentoUnidade + '.', 'italic', 9, largTit)
+        .forEach(function(l){ doc.text(l, M, y); y += lh(9); });
+      y -= lh(9) - 1;
+    }
+    if (temFoto && foto){
+      var fx = W - M - FW, fy = 18;
+      traco(FICHA.moldura, 0.35); doc.setLineDashPattern([0.9, 0.9], 0);
+      doc.roundedRect(fx - 2.2, fy - 2.2, FW + 4.4, FH + 4.4, 5, 5, 'S'); doc.setLineDashPattern([], 0);
+      try { doc.addImage(foto, 'JPEG', fx, fy, FW, FH); } catch(e){}
+      y = Math.max(y, fy + FH + 2.2);
+    }
+    y += 10;
+
+    /* ---------- Caixa com aba (Ingredientes / Modo de Preparo) ---------- */
+    function caixa(rotulo, italico, corAba, corBorda, linhas){
+      var abaH = 10, pad = 7, segIni, cont = false;
+      function abrir(){
+        if (y + abaH + 14 > LIM) novaPagina();
+        segIni = y; y += abaH / 2 + pad + 2;
+      }
+      function fechar(){
+        var fim = y + pad - 3;
+        traco(corBorda, 0.45); doc.roundedRect(M - 2, segIni + abaH / 2, larg + 4, fim - segIni - abaH / 2, 5, 5, 'S');
+        var tx = pdfTexto(rotulo + (cont ? ' (continuação)' : ''));
+        fonte(italico ? 'italic' : 'normal', 14); var wA = doc.getTextWidth(tx) + 16;
+        tinta(corAba); doc.roundedRect(M + 1, segIni, wA, abaH, abaH / 2, abaH / 2, 'F');
+        doc.setTextColor(255, 255, 255); doc.text(tx, M + 9, segIni + abaH / 2 + 1.7);
+        y = fim + 7.5;
+      }
+      abrir();
+      linhas.forEach(function(ln){
+        if (y + ln.h > LIM){ fechar(); novaPagina(); cont = true; abrir(); }
+        ln.draw(y); y += ln.h;
+      });
+      fechar();
+    }
+    function linhaParte(nome, corTx){
+      return { h: 7, draw: function(yy){
+        fonte('bold', 9); cor(corTx); doc.text(pdfTexto(nome).toUpperCase(), M + 4, yy + 4.6, { charSpace: 0.5 });
+      } };
     }
 
-    var multi = temPartes(r);
-    /* Ingredientes */
-    espaco(14); regua(); y += 5;
-    texto('Ingredientes', M, 'bold', 14, COR.texto); y += 1;
+    /* Ingredientes em duas colunas */
+    var multi = temPartes(r), colGap = 8, colW = (larg - 8 - colGap) / 2;
+    function medirIng(ing){
+      var c = calcularIngrediente(ing, f);
+      fonte('bold', 10.5);
+      var qtd = pdfTexto(c.textoQtd), wQ = doc.getTextWidth(qtd + ' ');
+      var txtW = colW - 7, linhas;
+      if (wQ > txtW * 0.6){ linhas = [qtd].concat(quebra(ing.nome, 'normal', 10.5, txtW)); wQ = 0; }
+      else { fonte('normal', 10.5); var resto = doc.splitTextToSize(pdfTexto(ing.nome), txtW - wQ); linhas = [qtd + '\u0000' + resto[0]].concat(resto.slice(1).length ? doc.splitTextToSize(pdfTexto(resto.slice(1).join(' ')), txtW) : []); }
+      var nota = c.nota ? quebra(c.nota, 'italic', 8, txtW) : [];
+      return { c: c, linhas: linhas, nota: nota, h: linhas.length * lh(10.5) + nota.length * lh(8) + 2.8 };
+    }
+    function desenharIng(m, x, yy){
+      traco(FICHA.check, 0.35); doc.roundedRect(x, yy + 0.9, 3.4, 3.4, 0.7, 0.7, 'S');
+      var tx = x + 6.5, ly = yy + lh(10.5) * 0.74;
+      m.linhas.forEach(function(l, i){
+        var p = l.split('\u0000');
+        if (p.length === 2){
+          fonte('bold', 10.5); cor(FICHA.titulo); doc.text(p[0], tx, ly);
+          var w = doc.getTextWidth(p[0] + ' '); fonte('normal', 10.5); cor(FICHA.texto); doc.text(p[1] || '', tx + w, ly);
+        } else if (i === 0 && m.linhas.length > 1 && l === pdfTexto(m.c.textoQtd)){
+          fonte('bold', 10.5); cor(FICHA.titulo); doc.text(l, tx, ly);
+        } else { fonte('normal', 10.5); cor(FICHA.texto); doc.text(l, tx, ly); }
+        ly += lh(10.5);
+      });
+      if (m.nota.length){ fonte('italic', 8); cor(m.c.alerta ? FICHA.terracota : FICHA.suave); m.nota.forEach(function(l){ doc.text(l, tx, ly - 1); ly += lh(8); }); }
+      traco(FICHA.regra, 0.25); doc.line(tx, yy + m.h - 1.2, x + colW, yy + m.h - 1.2);
+    }
+    var linhasIng = [];
     r.partes.forEach(function(p, k){
       if (!p.ingredientes.length) return;
-      if (multi){ y += 2; espaco(lh(10) + lh(11)); texto(nomeParte(p, k).toUpperCase(), M, 'bold', 9.5, COR.ambar); y += 0.5; }
-      p.ingredientes.forEach(function(ing){
-        var c = calcularIngrediente(ing, f);
-        fonte('bold', 11);
-        var qtd = pdfTexto(c.textoQtd), xQ = M + 5, wQ = doc.getTextWidth(qtd + ' ');
-        fonte('normal', 11);
-        var nome = doc.splitTextToSize(pdfTexto(ing.nome), larg - 5 - wQ);
-        espaco(lh(11) * nome.length + (c.nota ? lh(9) : 0));
-        cor(COR.muted); doc.text('•', M + 1, y + lh(11) * 0.75);
-        fonte('bold', 11); cor(COR.texto); doc.text(qtd, xQ, y + lh(11) * 0.75);
-        fonte('normal', 11);
-        nome.forEach(function(l, i){ doc.text(l, xQ + wQ, y + lh(11) * 0.75); y += lh(11); });
-        if (c.nota) texto(c.nota, xQ, 'italic', 8.5, c.alerta ? COR.aviso : COR.muted, larg - 5);
-        y += 0.8;
-      });
+      if (multi) linhasIng.push(linhaParte(nomeParte(p, k), FICHA.verdeTexto));
+      var ms = p.ingredientes.map(medirIng), meio = Math.ceil(ms.length / 2);
+      for (var i = 0; i < meio; i++){
+        (function(a, b){
+          linhasIng.push({ h: Math.max(a.h, b ? b.h : 0) + 0.8, draw: function(yy){
+            desenharIng(a, M + 4, yy); if (b) desenharIng(b, M + 4 + colW + colGap, yy);
+          } });
+        })(ms[i], ms[i + meio]);
+      }
     });
+    if (linhasIng.length) caixa('Ingredientes', false, FICHA.verde, FICHA.verdeBorda, linhasIng);
 
     /* Modo de preparo */
-    if (totalPassos(r)){
-      y += 4; espaco(14); regua(); y += 5;
-      texto('Modo de preparo', M, 'bold', 14, COR.texto); y += 1;
-      r.partes.forEach(function(p, k){
-        if (!p.passos.length) return;
-        if (multi){ y += 2; espaco(lh(10) + lh(11)); texto(nomeParte(p, k).toUpperCase(), M, 'bold', 9.5, COR.ambar); y += 0.5; }
-        p.passos.forEach(function(s, i){
-          fonte('normal', 11);
-          var linhas = doc.splitTextToSize(pdfTexto(s), larg - 9);
-          espaco(lh(11) * Math.min(linhas.length, 3));
-          fonte('bold', 11); cor(COR.ambar); doc.text((i + 1) + '.', M + 1, y + lh(11) * 0.75);
-          fonte('normal', 11); cor(COR.texto);
-          linhas.forEach(function(l){ espaco(lh(11)); doc.text(l, M + 9, y + lh(11) * 0.75); y += lh(11); });
-          y += 1.8;
-        });
+    var linhasPasso = [];
+    r.partes.forEach(function(p, k){
+      if (!p.passos.length) return;
+      if (multi) linhasPasso.push(linhaParte(nomeParte(p, k), FICHA.azulTexto));
+      p.passos.forEach(function(s, i){
+        var ls = quebra(s, 'normal', 10.5, larg - 22), hh = Math.max(8.4, ls.length * lh(10.5) + 4);
+        linhasPasso.push({ h: hh, draw: function(yy){
+          tinta(FICHA.azul); doc.circle(M + 7.5, yy + 3.4, 3.4, 'F');
+          fonte('bold', 9.5); doc.setTextColor(255, 255, 255); doc.text(String(i + 1), M + 7.5, yy + 4.6, { align: 'center' });
+          fonte('normal', 10.5); cor(FICHA.texto);
+          ls.forEach(function(l, j){ doc.text(l, M + 15, yy + 4.5 + j * lh(10.5)); });
+          traco(FICHA.regra, 0.25); doc.line(M + 15, yy + hh - 1.4, M + larg - 4, yy + hh - 1.4);
+        } });
       });
+    });
+    if (linhasPasso.length) caixa('Modo de Preparo', true, FICHA.azul, FICHA.azulBorda, linhasPasso);
+
+    /* Dicas e observações (quadro pêssego; se for muito longo, continua na página seguinte) */
+    if (r.dicas){
+      var colT = 56, dl = quebra(r.dicas, 'normal', 10, larg - colT - 14), tl = quebra('Dicas e Observações', 'italic', 12.5, colT - 6);
+      var padV = 5.5, cabe = function(n){ return Math.max(n * lh(10), tl.length * lh(12.5)) + 2 * padV; };
+      if (y + cabe(Math.min(dl.length, 3)) > LIM) novaPagina();
+      var ini = 0, primeiro = true;
+      while (ini < dl.length){
+        var n = dl.length - ini;
+        while (n > 1 && y + cabe(n) > LIM) n--;
+        var alt = cabe(n);
+        tinta(FICHA.pessego); doc.roundedRect(M - 2, y, larg + 4, alt, 6, 6, 'F');
+        traco(FICHA.moldura, 0.35); doc.line(M + colT, y + 4, M + colT, y + alt - 4);
+        if (primeiro){ fonte('italic', 12.5); cor(FICHA.terracotaTexto); tl.forEach(function(l, i){ doc.text(l, M + 4, y + padV + lh(12.5) * 0.72 + i * lh(12.5)); }); }
+        fonte('normal', 10); cor(FICHA.texto);
+        for (var i = 0; i < n; i++) doc.text(dl[ini + i], M + colT + 7, y + padV + lh(10) * 0.72 + i * lh(10));
+        y += alt + 6; ini += n; primeiro = false;
+        if (ini < dl.length) novaPagina();
+      }
     }
 
-    /* Rodapé em todas as páginas */
+    /* Rodapé */
     var total = doc.getNumberOfPages(), quando = new Date().toLocaleDateString('pt-BR');
     for (var pg = 1; pg <= total; pg++){
-      doc.setPage(pg); fonte('normal', 8); cor(COR.muted);
-      doc.text(pdfTexto('Conversor de Receitas  •  ' + quando), M, H - 10);
-      doc.text(pdfTexto('Página ' + pg + ' de ' + total), W - M, H - 10, { align: 'right' });
+      doc.setPage(pg); fonte('italic', 8); cor(FICHA.suave);
+      doc.text(pdfTexto('Conversor de Receitas  ·  ' + quando + (total > 1 ? '  ·  página ' + pg + ' de ' + total : '')), W / 2, H - 13, { align: 'center' });
     }
     doc.setProperties({ title: pdfTexto(r.nome), creator: 'Conversor de Receitas v' + APP_VERSION });
     return doc;
@@ -1706,7 +1913,38 @@ function pdfAcao(r, modo){
   }, function(e){ toast((e && e.message) || 'Não foi possível gerar o PDF.', 'err'); });
 }
 function podeImprimir(){ return typeof window.print === 'function'; }
+function folhaImpressaoHtml(r){
+  var f = fatorAtual(r), aj = Math.abs(f - 1) > 1e-9, multi = temPartes(r);
+  var selos = '';
+  if (r.tempoPreparo) selos += '<span class="ps-pill">' + ico('clock') + 'Preparo: ' + esc(r.tempoPreparo) + '</span>';
+  if (r.tempoCozimento) selos += '<span class="ps-pill">' + ico('flame') + 'Cozimento: ' + esc(r.tempoCozimento) + '</span>';
+  selos += '<span class="ps-pill">' + ico('utensils') + 'Rende: ' + (aj ? '~' + fmtNum(r.rendimentoQtd * f, 1) : fmtNum(r.rendimentoQtd)) + ' ' + esc(r.rendimentoUnidade) + '</span>';
+  var ing = r.partes.map(function(p, k){
+    if (!p.ingredientes.length) return '';
+    return (multi ? '<div class="ps-part ps-g">' + esc(nomeParte(p, k)) + '</div>' : '') + '<ul class="ps-ing">' + p.ingredientes.map(function(i){
+      var c = calcularIngrediente(i, f);
+      return '<li><span class="ps-box"></span><span><b>' + esc(c.textoQtd) + '</b> ' + esc(i.nome) + (c.nota ? '<small class="' + (c.alerta ? 'w' : '') + '">' + esc(c.nota) + '</small>' : '') + '</span></li>';
+    }).join('') + '</ul>';
+  }).join('');
+  var pas = r.partes.map(function(p, k){
+    if (!p.passos.length) return '';
+    return (multi ? '<div class="ps-part ps-b">' + esc(nomeParte(p, k)) + '</div>' : '') + '<ol class="ps-steps">' + p.passos.map(function(s, i){
+      return '<li><span class="ps-n">' + (i + 1) + '</span><span>' + esc(s) + '</span></li>'; }).join('') + '</ol>';
+  }).join('');
+  return '<div class="ps">' +
+    '<div class="ps-head"><div class="ps-hl"><div class="ps-topic">' + esc(r.topico) + '</div><h1>' + esc(r.nome) + '</h1>' +
+      '<svg class="ps-swash" viewBox="0 0 200 10" preserveAspectRatio="none"><path d="M2 7 C60 1, 140 1, 198 6" /></svg>' +
+      '<div class="ps-pills">' + selos + '</div>' +
+      (aj ? '<div class="ps-adj">Quantidades ajustadas: ×' + esc(fmtNum(f)) + ' da receita original, que rende ' + esc(fmtNum(r.rendimentoQtd)) + ' ' + esc(r.rendimentoUnidade) + '.</div>' : '') +
+    '</div>' + (r.foto ? '<div class="ps-photo"><img src="' + r.foto + '" alt=""></div>' : '') + '</div>' +
+    (ing ? '<section class="ps-sec ps-sec-g"><h2>Ingredientes</h2>' + ing + '</section>' : '') +
+    (pas ? '<section class="ps-sec ps-sec-b"><h2><i>Modo de Preparo</i></h2>' + pas + '</section>' : '') +
+    (r.dicas ? '<section class="ps-tips"><h3>Dicas e Observações</h3><p>' + esc(r.dicas) + '</p></section>' : '') +
+    '<div class="ps-foot">Conversor de Receitas · ' + new Date().toLocaleDateString('pt-BR') + '</div></div>';
+}
 function imprimirReceita(){
+  var r = getRecipe(state.recipeId); if (!r) return;
+  document.getElementById('printSheet').innerHTML = folhaImpressaoHtml(r);
   document.body.className += ' printing';
   setTimeout(function(){
     try { window.print(); } catch(e){ toast('Este aparelho não abriu a impressão. Use "Baixar PDF".', 'err'); }
@@ -1756,7 +1994,8 @@ function copiarTexto(txt, okMsg){
 }
 function textoReceita(r){
   var f = fatorAtual(r), aj = Math.abs(f - 1) > 1e-9;
-  var t = r.nome + '\n' + (aj ? 'Ajustada ×' + fmtNum(f) + ' — rende ≈ ' + fmtNum(r.rendimentoQtd * f, 1) : 'Rende ' + fmtNum(r.rendimentoQtd)) + ' ' + r.rendimentoUnidade + '\n\nIngredientes:\n';
+  var t = r.nome + '\n' + (aj ? 'Ajustada ×' + fmtNum(f) + ' — rende ≈ ' + fmtNum(r.rendimentoQtd * f, 1) : 'Rende ' + fmtNum(r.rendimentoQtd)) + ' ' + r.rendimentoUnidade + '\n' +
+    (r.tempoPreparo ? 'Preparo: ' + r.tempoPreparo + '\n' : '') + (r.tempoCozimento ? 'Cozimento: ' + r.tempoCozimento + '\n' : '') + '\nIngredientes:\n';
   var multi = temPartes(r);
   r.partes.forEach(function(p, k){
     if (!p.ingredientes.length) return;
@@ -1771,6 +2010,7 @@ function textoReceita(r){
       p.passos.forEach(function(s, i){ t += (i + 1) + '. ' + s + '\n'; });
     });
   }
+  if (r.dicas) t += '\nDicas e observações:\n' + r.dicas + '\n';
   return t;
 }
 function compartilhar(r){

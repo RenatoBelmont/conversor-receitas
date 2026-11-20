@@ -466,9 +466,9 @@
 
   /* ===== Toast ===== */
   .toast{
-    position:fixed; left:50%; bottom:calc(var(--nav-h) + 12px); z-index:60;
-    -webkit-transform:translate(-50%, 12px); transform:translate(-50%, 12px); opacity:0; pointer-events:none;
-    max-width:calc(100% - 32px); padding:10px 16px; border-radius:var(--radius-lg);
+    position:fixed; left:16px; right:16px; margin:0 auto; bottom:calc(var(--nav-h) + 12px); z-index:60;
+    width:-webkit-fit-content; width:-moz-fit-content; width:fit-content; max-width:480px;
+    -webkit-transform:translateY(12px); transform:translateY(12px); opacity:0; pointer-events:none; padding:10px 16px; border-radius:var(--radius-lg);
     background-color: rgb(var(--bg-surface)); color: rgb(var(--text-primary));
     border:1px solid rgb(var(--border-default)); box-shadow: var(--shadow-lg);
     font-size:13px; font-weight:500; display:flex; align-items:center; transition: opacity .2s, transform .2s;
@@ -476,7 +476,8 @@
   .toast svg{ margin-right:8px; }
   .toast.ok svg{ color: rgb(var(--success)); }
   .toast.err svg{ color: rgb(var(--danger)); }
-  .toast.show{ opacity:1; -webkit-transform:translate(-50%, 0); transform:translate(-50%, 0); }
+  .toast.info svg{ color: var(--amber-500); }
+  .toast.show{ opacity:1; -webkit-transform:none; transform:none; }
 
   /* ===== Modal ===== */
   .modal-overlay{ position:fixed; top:0; left:0; right:0; bottom:0; z-index:70; background-color: rgba(0,0,0,.5); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
@@ -525,10 +526,10 @@
 <script src="config.js"></script>
 <script>
 /* =====================================================================
-   Conversor de Receitas — v2.3.0
+   Conversor de Receitas — v2.3.1
    Design: Waypoint. Sem dependências, funciona offline (PWA).
    ===================================================================== */
-var APP_VERSION = '2.3.0';
+var APP_VERSION = '2.3.1';
 var STORE_KEY = 'receitas_app_v1';      /* mesma chave da v1: dados antigos continuam */
 var THEME_KEY = 'receitas_tema';
 var EXPORT_KEY = 'receitas_ultimo_backup';
@@ -801,11 +802,11 @@ var toastTimer = null;
 function toast(msg, kind){
   var t = document.getElementById('toast');
   t.className = 'toast ' + (kind || 'ok');
-  t.innerHTML = ico(kind === 'err' ? 'alert' : 'check') + '<span>' + esc(msg) + '</span>';
+  t.innerHTML = ico(kind === 'err' ? 'alert' : kind === 'info' ? 'info' : 'check') + '<span>' + esc(msg) + '</span>';
   void t.offsetWidth;
   t.className += ' show';
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){ t.className = t.className.replace(' show', ''); }, kind === 'err' ? 3800 : 2000);
+  toastTimer = setTimeout(function(){ t.className = t.className.replace(' show', ''); }, kind === 'err' ? 3800 : kind === 'info' ? 2500 : 2000);
 }
 function confirmModal(opts, onOk){
   var root = document.getElementById('modalRoot');
@@ -856,38 +857,60 @@ function renderTabs(){
   }
 }
 function formSujo(){ return state.view === 'form' && state.form && state.form.dirty; }
-/* hist: undefined = nova entrada no histórico, 'replace' = troca a atual, 'pop' = veio do botão voltar */
-function go(view, params, skipGuard, hist){
+function go(view, params, skipGuard){
   if (!skipGuard && formSujo()){
-    confirmModal({ title: 'Descartar alterações?', text: 'A receita que você está editando não foi salva.', ok: 'Descartar', danger: true }, function(){ state.form.dirty = false; go(view, params, true, hist); });
+    confirmModal({ title: 'Descartar alterações?', text: 'A receita que você está editando não foi salva.', ok: 'Descartar', danger: true }, function(){ state.form.dirty = false; go(view, params, true); });
     return;
   }
+  /* lembra de onde a receita foi aberta, para o voltar retornar ao lugar certo */
+  if (view === 'detail' && state.view !== 'detail' && state.view !== 'form') state.detailFrom = state.view;
   state.view = view;
   if (params) for (var k in params) state[k] = params[k];
-  if (hist !== 'pop'){
-    var entry = { v: view, t: state.topic, r: state.recipeId };
-    try { if (hist === 'replace') history.replaceState(entry, ''); else history.pushState(entry, ''); } catch(e){}
-  }
+  armarVoltar();
   render();
   window.scrollTo(0, 0);
 }
-/* Botão voltar do Android: navega dentro do app em vez de fechá-lo */
+
+/* ---------- Botão voltar do Android ----------
+   O histórico tem só UMA entrada extra (a "guarda"). Cada toque no voltar consome a guarda,
+   cai aqui, o app decide para onde ir (subindo um nível, não refazendo o caminho inteiro)
+   e arma a guarda de novo. Na tela inicial, o primeiro toque só avisa; o segundo,
+   em até 2,5 s, encontra o histórico sem guarda e o Android fecha o app. */
+var guardaArmada = false, saidaTimer = null;
+function armarVoltar(){
+  clearTimeout(saidaTimer);
+  if (guardaArmada) return;
+  try { history.pushState({ guarda: 1 }, ''); guardaArmada = true; } catch(e){}
+}
 function modalAberto(){ return !!document.getElementById('modalOverlay'); }
-window.addEventListener('popstate', function(e){
-  var atual = { v: state.view, t: state.topic, r: state.recipeId };
-  if (modalAberto()){ document.getElementById('modalRoot').innerHTML = ''; try { history.pushState(atual, ''); } catch(x){} return; }
+function telaPai(){
+  switch (state.view){
+    case 'detail': return (state.detailFrom === 'topic' && state.topic) ? 'topic' : (state.detailFrom === 'search' ? 'search' : 'home');
+    case 'form': return (state.form && (state.form.id || state.form.origem) && getRecipe(state.recipeId)) ? 'detail' : 'home';
+    case 'topic': case 'search': case 'backup': return 'home';
+    default: return null;
+  }
+}
+function voltarNivel(skipGuard){
+  var pai = telaPai();
+  if (!pai) return false;
+  go(pai, null, skipGuard);
+  return true;
+}
+window.addEventListener('popstate', function(){
+  guardaArmada = false;
+  if (modalAberto()){ document.getElementById('modalRoot').innerHTML = ''; armarVoltar(); return; }
   if (formSujo()){
-    try { history.pushState(atual, ''); } catch(x){}
+    armarVoltar();
     confirmModal({ title: 'Descartar alterações?', text: 'A receita que você está editando não foi salva.', ok: 'Descartar', danger: true },
-      function(){ state.form.dirty = false; history.back(); });
+      function(){ state.form.dirty = false; voltarNivel(true); });
     return;
   }
-  var s = e.state || { v: 'home' };
-  var v = s.v;
-  if (v === 'form' && !state.form) v = 'home';
-  if (v === 'detail' && !getRecipe(s.r)) v = 'home';
-  if (v === 'detail' && s.r !== state.recipeId){ state.checklist = {}; state.scale = { mode: 'rendimento', yieldVal: '', refId: null, haveVal: '' }; }
-  go(v, { topic: s.t || null, recipeId: s.r || null }, true, 'pop');
+  if (voltarNivel(true)) return;
+  /* tela inicial */
+  toast('Toque em voltar de novo para fechar o app', 'info');
+  clearTimeout(saidaTimer);
+  saidaTimer = setTimeout(armarVoltar, 2500);
 });
 (function(){
   var btns = document.querySelectorAll('#mainTabs .main-tab-btn');
@@ -1290,7 +1313,7 @@ function salvarFormulario(){
   if (!saveData()){ state.recipes = JSON.parse(backup); return; }
   f.dirty = false;
   toast(f.id ? 'Receita atualizada' : 'Receita salva');
-  go('detail', { recipeId: r.id, checklist: {}, scale: { mode: 'rendimento', yieldVal: '', refId: null, haveVal: '' }, form: null }, true, 'replace');
+  go('detail', { recipeId: r.id, checklist: {}, scale: { mode: 'rendimento', yieldVal: '', refId: null, haveVal: '' }, form: null }, true);
 }
 
 /* --- Backup --- */
@@ -1437,7 +1460,8 @@ function driveLogin(acao){
     scope: DRIVE.scope, include_granted_scopes: 'true', state: st
   };
   var url = 'https://accounts.google.com/o/oauth2/v2/auth?' + Object.keys(q).map(function(k){ return k + '=' + encodeURIComponent(q[k]); }).join('&');
-  location.assign(url);
+  guardaArmada = false;
+  location.replace(url);
 }
 /* Chamado na inicialização: trata a volta do Google (#access_token=… ou #error=…) */
 function driveRetorno(){
@@ -1913,7 +1937,7 @@ function acao(act, el){
   switch (act){
     case 'home': go('home'); break;
     case 'new': abrirFormulario(null); break;
-    case 'back-topic': go(state.topic ? 'topic' : 'home'); break;
+    case 'back-topic': voltarNivel(); break;
     case 'edit': abrirFormulario(state.recipeId); break;
     case 'clone':
       abrirFormulario(state.recipeId, true);
@@ -1930,7 +1954,7 @@ function acao(act, el){
         var antes = JSON.stringify(state.recipes);
         state.recipes = state.recipes.filter(function(x){ return x.id !== r.id; });
         if (!saveData()){ state.recipes = JSON.parse(antes); return; }
-        toast('Receita excluída'); go('home', { recipeId: null }, true, 'replace');
+        toast('Receita excluída'); go('home', { recipeId: null }, true);
       });
       break;
     case 'reset-scale': state.scale.yieldVal = ''; state.scale.haveVal = ''; render(); break;
@@ -1985,7 +2009,7 @@ function acao(act, el){
     }
     case 'remove-photo': f.foto = null; f.dirty = true; render(); break;
     case 'save': salvarFormulario(); break;
-    case 'cancel-edit': go('detail', { recipeId: f.id }, false, 'replace'); break;
+    case 'cancel-edit': go('detail', { recipeId: f.id }, false); break;
     case 'export': exportarDownload(); break;
     case 'export-share': exportarCompartilhar(); break;
     case 'import-cancel': state.importPreview = null; render(); break;
@@ -2003,8 +2027,10 @@ document.getElementById('footer').innerHTML = 'Conversor de Receitas · v' + APP
 applyThemeUI();
 var retornoDrive = driveRetorno();
 if (retornoDrive) state.view = 'backup';
-try { history.replaceState({ v: state.view, t: null, r: null }, ''); } catch(e){}
 render();
+/* recarregou estando na entrada de guarda? ela já existe — não empilhar outra */
+try { if (history.state && history.state.guarda) guardaArmada = true; } catch(e){}
+armarVoltar();
 if (retornoDrive){
   if (retornoDrive.erro) toast(retornoDrive.erro, 'err');
   else if (retornoDrive.acao) driveExecutar(retornoDrive.acao, true);

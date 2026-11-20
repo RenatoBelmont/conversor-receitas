@@ -196,6 +196,7 @@
   .btn-danger{ border:1px solid rgb(var(--danger) / .4); color: rgb(var(--danger)); background-color: rgb(var(--danger) / .08); font-weight:500; }
   .btn-danger.solid{ background-color: rgb(var(--danger)); color:#fff; border-color: transparent; }
   .btn-block{ display:flex; width:100%; }
+  .btn-row.two-col > .btn{ flex:1 1 40%; }
   .btn-row{ display:flex; flex-wrap:wrap; margin:-4px; }
   .btn-row > .btn{ flex:1 1 0; margin:4px; }
   .link-btn{ display:inline-block; padding:10px 4px; color: rgb(var(--text-secondary)); font-size:13px; font-weight:500; text-decoration:underline; text-underline-offset:2px; }
@@ -370,6 +371,44 @@
   .form-actions{ position:sticky; bottom:var(--nav-h); z-index:5; padding:12px 0; margin-top:16px;
     background-image: linear-gradient(to top, rgb(var(--bg-app)) 70%, rgb(var(--bg-app) / 0)); }
 
+  /* ===== Lista de tópicos (substitui o datalist, que não abre no Chrome do Android) ===== */
+  .combo{ position:relative; }
+  .combo .input-field{ padding-right:48px; }
+  .combo-btn{ position:absolute; right:2px; top:2px; width:44px; height:40px; border-radius:var(--radius-md);
+    display:flex; align-items:center; justify-content:center; color: rgb(var(--text-secondary)); }
+  .combo-btn.open svg{ -webkit-transform:rotate(180deg); transform:rotate(180deg); }
+  .combo-menu{ position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:15; max-height:240px; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    background-color: rgb(var(--bg-surface)); border:1px solid rgb(var(--border-default)); border-radius:var(--radius-lg); box-shadow: var(--shadow-menu); padding:4px; }
+  .combo-item{ display:flex; align-items:center; width:100%; min-height:44px; padding:8px 10px; border-radius:var(--radius-md); text-align:left; font-size:15px; }
+  .combo-item .topic-dot{ margin:0 10px 0 0; }
+  .combo-item .c-count{ margin-left:auto; font-size:12px; color: rgb(var(--text-muted)); }
+  .combo-item.sel{ background-color: rgb(var(--amber-500-rgb) / .12); font-weight:600; }
+  .combo-item:active{ background-color: rgb(var(--bg-surface-2)); }
+  .combo-empty{ padding:10px; font-size:13px; color: rgb(var(--text-secondary)); }
+
+  /* ===== Partes da receita ===== */
+  .part-card{ border:1px solid rgb(var(--border-default)); border-radius:var(--radius-xl); background-color: rgb(var(--bg-surface-2)); padding:12px; margin-bottom:12px; }
+  .part-head{ display:flex; align-items:center; margin-bottom:4px; }
+  .part-num{ width:28px; height:28px; flex-shrink:0; margin-right:8px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center;
+    font-family: var(--font-mono); font-size:13px; font-weight:700; background-color: rgb(var(--amber-500-rgb) / .15); color: rgb(var(--text-primary)); border:1px solid rgb(var(--amber-500-rgb) / .35); }
+  .part-head .part-name{ flex:1; min-width:0; font-weight:600; }
+  .part-head .del-mini{ margin-left:2px; flex-shrink:0; width:40px; }
+  .del-mini:disabled{ opacity:.3; cursor:default; }
+  .sub-label{ font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.03em; color: rgb(var(--text-secondary)); margin:14px 2px 8px; display:flex; justify-content:space-between; }
+  .sub-label .count{ font-weight:500; color: rgb(var(--text-muted)); }
+  .part-list .ing-form{ background-color: rgb(var(--bg-surface)); }
+  .move-line{ margin-top:6px; }
+  .move-sel{ min-height:36px; padding:6px 30px 6px 10px; font-size:14px; width:auto; max-width:100%; color: rgb(var(--text-secondary)); background-position: right 8px center; }
+  .step-main{ flex:1; min-width:0; }
+  .step-main textarea{ width:100%; }
+  .step-main .move-sel{ margin-top:6px; }
+  .split-btn{ margin-top:12px; border-color: rgb(var(--amber-500-rgb) / .45); color: rgb(var(--text-primary)); background-color: rgb(var(--amber-500-rgb) / .06); }
+  .part-label{ display:flex; align-items:center; justify-content:flex-start; margin:16px 0 2px; padding-top:12px; border-top:1px solid rgb(var(--border-default));
+    font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color: rgb(var(--text-primary)); }
+  .part-label::before{ content:''; width:8px; height:8px; border-radius:50%; background-color: var(--amber-500); margin-right:8px; flex-shrink:0; }
+  .part-label .count{ margin-left:auto; font-weight:500; letter-spacing:0; color: rgb(var(--text-muted)); }
+  .progress-track + .hint + .part-label, .card-title + .part-label{ border-top:none; padding-top:0; margin-top:12px; }
+
   /* ===== Backup ===== */
   .help-note{ display:flex; font-size:13px; line-height:1.6; color: rgb(var(--text-secondary)); border:1px solid rgb(var(--border-default)); border-radius:14px; background-color: rgb(var(--bg-surface-2) / .5); padding:12px 14px; margin-bottom:14px; }
   .help-note svg{ margin-right:10px; margin-top:2px; color: rgb(var(--text-muted)); }
@@ -458,14 +497,14 @@
 
 <script>
 /* =====================================================================
-   Conversor de Receitas — v2.1.1
+   Conversor de Receitas — v2.2.0
    Design: Waypoint. Sem dependências, funciona offline (PWA).
    ===================================================================== */
-var APP_VERSION = '2.1.1';
+var APP_VERSION = '2.2.0';
 var STORE_KEY = 'receitas_app_v1';      /* mesma chave da v1: dados antigos continuam */
 var THEME_KEY = 'receitas_tema';
 var EXPORT_KEY = 'receitas_ultimo_backup';
-var EXPORT_SCHEMA = 1;
+var EXPORT_SCHEMA = 2;   /* 2 = receitas com partes; backups do schema 1 continuam importando */
 
 /* ---------- Ícones (estilo Lucide, SVG inline) ---------- */
 var ICONS = {
@@ -490,6 +529,10 @@ var ICONS = {
   'info':     '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
   'rotate':   '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
   'cup':      '<path d=\"M3 4h14.5l-1.6 15.2A2 2 0 0 1 13.9 21H7.1a2 2 0 0 1-2-1.8L3.6 6.5 2 4.5\"/><path d=\"M17.2 7.5h1.8a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2.5\"/><path d=\"M8 9h4M8 12.5h1.2M8 16h4\"/>',
+  'layers':   '<path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/>',
+  'chevron-up':'<path d="m18 15-6-6-6 6"/>',
+  'chevron-down':'<path d="m6 9 6 6 6-6"/>',
+  'copy':     '<rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
   'folder':   '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>'
 };
 function ico(name, cls){
@@ -615,11 +658,30 @@ function normalizarIngrediente(i){
     pesoUnitario: i.contavel && isFinite(peso) && peso > 0 ? peso : null
   };
 }
+function normalizarPassos(arr){
+  return Array.isArray(arr) ? arr.map(function(p){ return String((p && typeof p === 'object') ? (p.texto || '') : (p == null ? '' : p)).trim(); }).filter(Boolean) : [];
+}
+function normalizarParte(pt){
+  if (!pt || typeof pt !== 'object') return null;
+  var out = {
+    id: pt.id ? String(pt.id) : uid(),
+    nome: String(pt.nome || '').trim(),
+    ingredientes: Array.isArray(pt.ingredientes) ? pt.ingredientes.map(normalizarIngrediente).filter(Boolean) : [],
+    passos: normalizarPassos(pt.passos)
+  };
+  return (out.ingredientes.length || out.passos.length) ? out : null;
+}
+/* Partes: Massa, Recheio, Cobertura… Receitas antigas (sem partes) viram uma parte única sem nome. */
 function normalizarReceita(r){
   if (!r || typeof r !== 'object') return null;
   var nome = String(r.nome || '').trim();
   if (!nome) return null;
-  var ings = Array.isArray(r.ingredientes) ? r.ingredientes.map(normalizarIngrediente).filter(Boolean) : [];
+  var partes = Array.isArray(r.partes) ? r.partes.map(normalizarParte).filter(Boolean) : [];
+  if (!partes.length){
+    var unica = normalizarParte({ nome: '', ingredientes: r.ingredientes, passos: r.passos });
+    partes = [unica || { id: uid(), nome: '', ingredientes: [], passos: [] }];
+  }
+  if (partes.length === 1 && !Array.isArray(r.partes)) partes[0].nome = '';
   var rq = parseNum(r.rendimentoQtd);
   var foto = (typeof r.foto === 'string' && r.foto.indexOf('data:image/') === 0) ? r.foto : null;
   var criado = parseNum(r.createdAt);
@@ -630,8 +692,7 @@ function normalizarReceita(r){
     foto: foto,
     rendimentoQtd: isFinite(rq) && rq > 0 ? rq : 1,
     rendimentoUnidade: String(r.rendimentoUnidade || '').trim() || 'porções',
-    ingredientes: ings,
-    passos: Array.isArray(r.passos) ? r.passos.map(function(p){ return String(p || '').trim(); }).filter(Boolean) : [],
+    partes: partes,
     createdAt: isFinite(criado) ? criado : Date.now(),
     updatedAt: isFinite(parseNum(r.updatedAt)) ? parseNum(r.updatedAt) : (isFinite(criado) ? criado : Date.now())
   };
@@ -664,6 +725,11 @@ function loadData(){
   } catch(e){}
   return seed();
 }
+function todosIngredientes(r){ var out = []; r.partes.forEach(function(p){ out = out.concat(p.ingredientes); }); return out; }
+function totalPassos(r){ var n = 0; r.partes.forEach(function(p){ n += p.passos.length; }); return n; }
+function temPartes(r){ return r.partes.length > 1 || !!r.partes[0].nome; }
+function nomeParte(p, i){ return p.nome || ('Parte ' + (i + 1)); }
+
 /* Retorna true/false — o armazenamento do navegador tem limite (~5 MB) */
 function saveData(){
   try {
@@ -743,7 +809,7 @@ document.getElementById('themeBtn').onclick = function(){
 var TABS = { home: ['book', 'Receitas'], search: ['search', 'Buscar'], form: ['plus', 'Nova'], backup: ['database', 'Backup'] };
 function tabOf(view){
   if (view === 'detail' || view === 'topic') return 'home';
-  if (view === 'form') return (state.form && state.form.id) ? 'home' : 'form';
+  if (view === 'form') return (state.form && (state.form.id || state.form.origem)) ? 'home' : 'form';
   return view;
 }
 function renderTabs(){
@@ -816,7 +882,7 @@ function render(){
 }
 
 function recipeRow(r){
-  var n = r.ingredientes.length;
+  var n = todosIngredientes(r).length;
   return '<button class="recipe-row" data-open="' + esc(r.id) + '">' +
     '<span class="thumb">' + (r.foto ? '<img src="' + r.foto + '" alt="">' : ico('utensils')) + '</span>' +
     '<span class="r-info">' +
@@ -872,14 +938,14 @@ function searchResults(){
   if (!q) return emptyBlock('search', 'Buscar receitas', 'Digite um nome, tópico ou ingrediente. Acentos são ignorados.');
   var res = state.recipes.filter(function(r){
     if (norm(r.nome).indexOf(q) >= 0 || norm(r.topico).indexOf(q) >= 0) return true;
-    return r.ingredientes.some(function(i){ return norm(i.nome).indexOf(q) >= 0; });
+    return r.partes.some(function(p){ return norm(p.nome).indexOf(q) >= 0 || p.ingredientes.some(function(i){ return norm(i.nome).indexOf(q) >= 0; }); });
   });
   if (!res.length) return emptyBlock('search', 'Nada encontrado', 'Nenhuma receita corresponde a "' + state.search.trim() + '".');
   return '<div class="group-label" style="margin-top:0">Resultados <span class="count">' + res.length + '</span></div>' + res.map(recipeRow).join('');
 }
 
 /* --- Detalhe + conversão --- */
-function ingredientesEscalaveis(r){ return r.ingredientes.filter(function(i){ return !naoEscala(i) && i.qtd > 0; }); }
+function ingredientesEscalaveis(r){ return todosIngredientes(r).filter(function(i){ return !naoEscala(i) && i.qtd > 0; }); }
 function fatorAtual(r){
   var s = state.scale;
   if (s.mode === 'rendimento'){
@@ -916,7 +982,7 @@ function viewDetail(){
     h += '<div class="hint">Esta receita não tem ingredientes com quantidade para usar como referência.</div>';
   } else {
     h += '<div class="field"><label class="field-label" for="refSelect">Ingrediente que você tem em outra quantidade</label><select class="input-field" id="refSelect">' +
-         escal.map(function(i){ return '<option value="' + esc(i.id) + '"' + (i.id === s.refId ? ' selected' : '') + '>' + esc(i.nome) + ' (receita: ' + esc(fmtQtdOriginal(i)) + ')</option>'; }).join('') +
+         refOptions(r) +
          '</select></div>';
     var refIng = escal.filter(function(i){ return i.id === s.refId; })[0];
     h += '<div class="field"><label class="field-label" for="haveInput">Quanto você tem' + (refIng ? ' (em ' + esc(refIng.unidade) + ')' : '') + '</label>' +
@@ -929,16 +995,33 @@ function viewDetail(){
   h += '<div class="card card-pad" id="ingCard">' + ingCardHtml(r) + '</div>';
 
   /* Preparo */
-  if (r.passos.length){
-    h += '<div class="card card-pad"><div class="card-title">Modo de preparo <span class="muted">' + r.passos.length + ' ' + plural(r.passos.length, 'passo', 'passos') + '</span></div><ol class="steps">' +
-      r.passos.map(function(p, i){ return '<li><span class="step-n">' + (i + 1) + '</span><span>' + esc(p) + '</span></li>'; }).join('') + '</ol></div>';
+  var np = totalPassos(r);
+  if (np){
+    var partes = temPartes(r);
+    h += '<div class="card card-pad"><div class="card-title">Modo de preparo <span class="muted">' + np + ' ' + plural(np, 'passo', 'passos') + '</span></div>' +
+      r.partes.map(function(p, k){
+        if (!p.passos.length) return '';
+        return (partes ? '<div class="part-label">' + esc(nomeParte(p, k)) + '</div>' : '') +
+          '<ol class="steps">' + p.passos.map(function(t, i){ return '<li><span class="step-n">' + (i + 1) + '</span><span>' + esc(t) + '</span></li>'; }).join('') + '</ol>';
+      }).join('') + '</div>';
   }
 
-  h += '<div class="btn-row" style="margin-top:14px">' +
+  h += '<div class="btn-row two-col" style="margin-top:14px">' +
        '<button class="btn btn-ghost" data-act="edit">' + ico('pencil') + 'Editar</button>' +
+       '<button class="btn btn-ghost" data-act="clone">' + ico('copy') + 'Duplicar</button>' +
        '<button class="btn btn-ghost" data-act="share">' + ico('share') + 'Compartilhar</button>' +
        '<button class="btn btn-danger" data-act="delete">' + ico('trash') + 'Excluir</button></div>';
   return h;
+}
+function refOptions(r){
+  var s = state.scale;
+  function opt(i){ return '<option value="' + esc(i.id) + '"' + (i.id === s.refId ? ' selected' : '') + '>' + esc(i.nome) + ' (receita: ' + esc(fmtQtdOriginal(i)) + ')</option>'; }
+  function ok(i){ return !naoEscala(i) && i.qtd > 0; }
+  if (!temPartes(r)) return r.partes[0].ingredientes.filter(ok).map(opt).join('');
+  return r.partes.map(function(p, k){
+    var l = p.ingredientes.filter(ok);
+    return l.length ? '<optgroup label="' + esc(nomeParte(p, k)) + '">' + l.map(opt).join('') + '</optgroup>' : '';
+  }).join('');
 }
 function factorLineHtml(r){
   var f = fatorAtual(r);
@@ -950,8 +1033,8 @@ function factorLineHtml(r){
 }
 function ingCardHtml(r){
   var f = fatorAtual(r);
-  var total = r.ingredientes.length, feitos = 0;
-  var lis = r.ingredientes.map(function(ing){
+  var todos = todosIngredientes(r), total = todos.length, feitos = 0, partes = temPartes(r);
+  function li(ing){
     var c = calcularIngrediente(ing, f), ok = !!state.checklist[ing.id];
     if (ok) feitos++;
     return '<li><button class="ing-item' + (ok ? ' done' : '') + '" data-check="' + esc(ing.id) + '">' +
@@ -959,12 +1042,19 @@ function ingCardHtml(r){
       '<span class="ing-body"><span class="ing-qty">' + esc(c.textoQtd) + '</span> <span class="ing-name">' + esc(ing.nome) + '</span>' +
       (c.nota ? '<span class="ing-note' + (c.alerta ? ' warn' : '') + '">' + esc(c.nota) + '</span>' : '') +
       '</span></button></li>';
+  }
+  var corpo = r.partes.map(function(p, k){
+    if (!p.ingredientes.length) return '';
+    var lis = p.ingredientes.map(li).join('');
+    if (!partes) return '<ul class="ing-list">' + lis + '</ul>';
+    var feitosP = p.ingredientes.filter(function(i){ return state.checklist[i.id]; }).length;
+    return '<div class="part-label">' + esc(nomeParte(p, k)) + ' <span class="count">' + feitosP + '/' + p.ingredientes.length + '</span></div><ul class="ing-list">' + lis + '</ul>';
   }).join('');
   var pct = total ? Math.round(feitos / total * 100) : 0;
   return '<div class="card-title">Ingredientes ' + (Math.abs(f - 1) > 1e-9 ? '<span class="badge badge-amber" style="margin:0">Recalculados</span>' : '<span class="muted">' + total + '</span>') + '</div>' +
     '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
     '<div class="hint" style="margin-top:0">' + feitos + ' de ' + total + ' separados — toque para marcar</div>' +
-    '<ul class="ing-list">' + lis + '</ul>';
+    corpo;
 }
 /* Atualiza só o resultado, sem recriar os campos — o teclado não fecha ao digitar */
 function refreshScale(){
@@ -977,15 +1067,31 @@ function refreshScale(){
 
 /* --- Formulário --- */
 function novoIngForm(){ return { id: uid(), nome: '', qtd: '', unidade: 'g', contavel: false, pesoUnitario: '' }; }
-function abrirFormulario(id){
+function novoPassoForm(t){ return { id: uid(), texto: t || '' }; }
+function novaParteForm(nome){ return { id: uid(), nome: nome || '', ingredientes: [novoIngForm()], passos: [novoPassoForm()] }; }
+function ingParaForm(i){ return { id: i.id, nome: i.nome, qtd: naoEscala(i) ? '' : fmtNum(i.qtd, 4), unidade: i.unidade, contavel: i.contavel, pesoUnitario: i.pesoUnitario ? fmtNum(i.pesoUnitario) : '' }; }
+function acharParte(id){ return state.form.partes.filter(function(p){ return p.id === id; })[0]; }
+/* clonar = true: formulário preenchido com uma cópia da receita, salva como receita nova */
+function abrirFormulario(id, clonar){
   var r = id ? getRecipe(id) : null;
   var form;
   if (r){
     form = { id: r.id, nome: r.nome, topico: r.topico, rendQtd: fmtNum(r.rendimentoQtd), rendUnid: r.rendimentoUnidade, foto: r.foto,
-      ingredientes: r.ingredientes.map(function(i){ return { id: i.id, nome: i.nome, qtd: naoEscala(i) ? '' : fmtNum(i.qtd, 4), unidade: i.unidade, contavel: i.contavel, pesoUnitario: i.pesoUnitario ? fmtNum(i.pesoUnitario) : '' }; }),
-      passos: r.passos.slice(), dirty: false, erros: {} };
+      partes: r.partes.map(function(p){
+        return { id: p.id, nome: p.nome,
+          ingredientes: p.ingredientes.length ? p.ingredientes.map(ingParaForm) : [novoIngForm()],
+          passos: p.passos.length ? p.passos.map(function(t){ return novoPassoForm(t); }) : [novoPassoForm()] };
+      }), dirty: false, erros: {} };
+    if (clonar){
+      form.id = null; form.origem = r.nome; form.nome = r.nome + ' (cópia)'; form.dirty = true;
+      form.partes.forEach(function(p){
+        p.id = uid();
+        p.ingredientes.forEach(function(i){ i.id = uid(); });
+        p.passos.forEach(function(s){ s.id = uid(); });
+      });
+    }
   } else {
-    form = { id: null, nome: '', topico: '', rendQtd: '', rendUnid: '', foto: null, ingredientes: [novoIngForm()], passos: [''], dirty: false, erros: {} };
+    form = { id: null, nome: '', topico: '', rendQtd: '', rendUnid: '', foto: null, partes: [novaParteForm('')], dirty: false, erros: {} };
   }
   if (formSujo()){
     confirmModal({ title: 'Descartar alterações?', text: 'A receita que você está editando não foi salva.', ok: 'Descartar', danger: true }, function(){ go('form', { form: form }, true); });
@@ -997,7 +1103,9 @@ function viewForm(){
   var f = state.form, e = f.erros || {};
   var h = '';
   if (f.id) h += '<button class="back-btn" data-act="cancel-edit">' + ico('arrow-left', 'i-sm') + 'Voltar à receita</button>';
-  h += '<div class="group-label" style="margin-top:4px">' + (f.id ? 'Editar receita' : 'Nova receita') + '</div>';
+  if (f.origem) h += '<button class="back-btn" data-act="cancel-clone">' + ico('arrow-left', 'i-sm') + 'Voltar à receita</button>';
+  h += '<div class="group-label" style="margin-top:4px">' + (f.id ? 'Editar receita' : f.origem ? 'Nova receita (cópia)' : 'Nova receita') + '</div>';
+  if (f.origem) h += '<div class="help-note">' + ico('copy', 'i-sm') + '<div>Cópia de <strong>' + esc(f.origem) + '</strong>. Mude o nome e só os ingredientes que forem diferentes — a receita original não é alterada.</div></div>';
 
   h += '<label class="photo-picker' + (f.foto ? ' has-photo' : '') + '">' + (f.foto ? '<img src="' + f.foto + '" alt="">' : '') +
        '<span class="pp-label">' + ico('camera', 'i-sm') + (f.foto ? 'Trocar foto' : 'Adicionar foto (opcional)') + '</span>' +
@@ -1006,15 +1114,51 @@ function viewForm(){
 
   h += '<div class="card card-pad" style="margin-top:12px">' +
     '<div class="field"><label class="field-label" for="fNome">Nome da receita</label><input class="input-field' + (e.nome ? ' invalid' : '') + '" id="fNome" data-f="nome" value="' + esc(f.nome) + '" placeholder="ex.: Suspiro de merengue"></div>' +
-    '<div class="field"><label class="field-label" for="fTopico">Tópico</label><input class="input-field" id="fTopico" data-f="topico" list="topicList" value="' + esc(f.topico) + '" placeholder="ex.: Sobremesas">' +
-      '<datalist id="topicList">' + topicos().map(function(t){ return '<option value="' + esc(t[0]) + '">'; }).join('') + '</datalist></div>' +
+    '<div class="field"><label class="field-label" for="fTopico">Tópico</label>' +
+      '<div class="combo"><input class="input-field" id="fTopico" data-f="topico" autocomplete="off" value="' + esc(f.topico) + '" placeholder="Escolha ou digite um novo">' +
+      '<button type="button" class="combo-btn" id="topicBtn" aria-label="Mostrar tópicos" aria-expanded="false">' + ico('chevron-down') + '</button>' +
+      '<div class="combo-menu hidden" id="topicMenu" role="listbox"></div></div></div>' +
     '<div class="field"><div class="row2">' +
       '<div><label class="field-label" for="fRendQtd">Rendimento</label><input class="input-field' + (e.rendQtd ? ' invalid' : '') + '" id="fRendQtd" data-f="rendQtd" type="text" inputmode="decimal" value="' + esc(f.rendQtd) + '" placeholder="ex.: 20"></div>' +
       '<div><label class="field-label" for="fRendUnid">Unidade</label><input class="input-field" id="fRendUnid" data-f="rendUnid" value="' + esc(f.rendUnid) + '" placeholder="suspiros, fatias…"></div>' +
     '</div></div></div>';
 
-  h += '<div class="group-label">Ingredientes <span class="count">' + f.ingredientes.length + '</span></div><div class="section-group">';
-  h += f.ingredientes.map(function(ing){
+  var multi = f.partes.length > 1;
+  if (!multi){
+    h += partFormBody(f.partes[0], e, false);
+    h += '<button class="add-btn split-btn" data-act="add-part">' + ico('layers', 'i-sm') + 'Dividir em partes (massa, recheio, cobertura…)</button>';
+  } else {
+    h += '<div class="group-label">Partes da receita <span class="count">' + f.partes.length + '</span></div>';
+    h += f.partes.map(function(p, k){
+      var errN = e.parte && e.parte[p.id];
+      return '<div class="part-card" data-part="' + esc(p.id) + '">' +
+        '<div class="part-head">' +
+          '<span class="part-num">' + (k + 1) + '</span>' +
+          '<input class="input-field part-name' + (errN ? ' invalid' : '') + '" data-pname value="' + esc(p.nome) + '" placeholder="Nome da parte (ex.: Massa)">' +
+          '<button class="del-mini" data-act="part-up" title="Mover para cima" aria-label="Mover parte para cima"' + (k === 0 ? ' disabled' : '') + '>' + ico('chevron-up', 'i-sm') + '</button>' +
+          '<button class="del-mini" data-act="part-down" title="Mover para baixo" aria-label="Mover parte para baixo"' + (k === f.partes.length - 1 ? ' disabled' : '') + '>' + ico('chevron-down', 'i-sm') + '</button>' +
+          '<button class="del-mini" data-act="del-part" title="Remover parte" aria-label="Remover parte">' + ico('trash', 'i-sm') + '</button>' +
+        '</div>' + partFormBody(p, e, true) + '</div>';
+    }).join('');
+    h += '<button class="add-btn" data-act="add-part">' + ico('plus', 'i-sm') + 'Adicionar parte</button>';
+  }
+
+  h += '<div class="form-actions"><div class="btn-row">' +
+       (f.id ? '<button class="btn btn-ghost" data-act="cancel-edit">Cancelar</button>' : '') +
+       '<button class="btn btn-primary" data-act="save">' + ico('check') + (f.id ? 'Salvar alterações' : 'Salvar receita') + '</button></div></div>';
+  return h;
+}
+
+function moverSelect(tipo, parteAtual){
+  var f = state.form;
+  return '<select class="input-field move-sel" data-move="' + tipo + '" aria-label="Mover para outra parte">' +
+    f.partes.map(function(p, k){ return '<option value="' + esc(p.id) + '"' + (p.id === parteAtual.id ? ' selected' : '') + '>' + esc(p.id === parteAtual.id ? 'Em: ' : 'Mover p/ ') + esc(nomeParte(p, k)) + '</option>'; }).join('') +
+    '</select>';
+}
+function partFormBody(p, e, multi){
+  var h = '', sub = multi ? 'sub-label' : 'group-label';
+  h += '<div class="' + sub + '">Ingredientes <span class="count">' + p.ingredientes.length + '</span></div><div class="' + (multi ? 'part-list' : 'section-group') + '">';
+  h += p.ingredientes.map(function(ing){
     var errQ = e.ing && e.ing[ing.id];
     return '<div class="ing-form" data-ing="' + esc(ing.id) + '">' +
       '<div class="top" style="flex-wrap:wrap">' +
@@ -1027,21 +1171,20 @@ function viewForm(){
           '<label class="check-label"><input type="checkbox" data-i="contavel"' + (ing.contavel ? ' checked' : '') + '>Contável (não fraciona)</label>' +
           (ing.contavel ? '<span class="peso-wrap">1 un. ≈<input class="input-field" data-i="pesoUnitario" type="text" inputmode="decimal" value="' + esc(ing.pesoUnitario) + '" placeholder="?">g</span>' : '')) +
         '<button class="del-mini" data-act="del-ing" title="Remover ingrediente" aria-label="Remover ingrediente">' + ico('trash', 'i-sm') + '</button>' +
-      '</div></div>';
+      '</div>' +
+      (multi ? '<div class="move-line">' + moverSelect('ing', p) + '</div>' : '') +
+      '</div>';
   }).join('');
   h += '<button class="add-btn" data-act="add-ing">' + ico('plus', 'i-sm') + 'Adicionar ingrediente</button></div>';
 
-  h += '<div class="group-label">Modo de preparo <span class="count">' + f.passos.length + '</span></div><div class="section-group">';
-  h += f.passos.map(function(p, i){
-    return '<div class="step-form"><span class="step-n">' + (i + 1) + '</span>' +
-      '<textarea class="input-field" data-step="' + i + '" placeholder="Descreva o passo ' + (i + 1) + '">' + esc(p) + '</textarea>' +
-      '<button class="del-mini" data-act="del-step" data-idx="' + i + '" title="Remover passo" aria-label="Remover passo">' + ico('x', 'i-sm') + '</button></div>';
+  h += '<div class="' + sub + '">Modo de preparo <span class="count">' + p.passos.length + '</span></div><div class="' + (multi ? 'part-list' : 'section-group') + '">';
+  h += p.passos.map(function(st, i){
+    return '<div class="step-form" data-stepid="' + esc(st.id) + '"><span class="step-n">' + (i + 1) + '</span>' +
+      '<div class="step-main"><textarea class="input-field" data-step placeholder="Descreva o passo ' + (i + 1) + '">' + esc(st.texto) + '</textarea>' +
+      (multi ? moverSelect('step', p) : '') + '</div>' +
+      '<button class="del-mini" data-act="del-step" title="Remover passo" aria-label="Remover passo">' + ico('x', 'i-sm') + '</button></div>';
   }).join('');
   h += '<button class="add-btn" data-act="add-step">' + ico('plus', 'i-sm') + 'Adicionar passo</button></div>';
-
-  h += '<div class="form-actions"><div class="btn-row">' +
-       (f.id ? '<button class="btn btn-ghost" data-act="cancel-edit">Cancelar</button>' : '') +
-       '<button class="btn btn-primary" data-act="save">' + ico('check') + (f.id ? 'Salvar alterações' : 'Salvar receita') + '</button></div></div>';
   return h;
 }
 
@@ -1072,19 +1215,29 @@ function validarFormulario(){
   var rq = parseNum(f.rendQtd);
   if (!nome){ erros.nome = true; msg = msg || 'Dê um nome para a receita.'; }
   if (!(isFinite(rq) && rq > 0)){ erros.rendQtd = true; msg = msg || 'Informe o rendimento (um número maior que zero).'; }
-  var ings = [];
-  f.ingredientes.forEach(function(i){
-    if (!i.nome.trim()) return;
-    if (i.unidade === 'a gosto'){ ings.push({ id: i.id, nome: i.nome.trim(), qtd: 0, unidade: i.unidade, contavel: false, pesoUnitario: null }); return; }
-    var q = parseNum(i.qtd);
-    if (!(isFinite(q) && q > 0)){ erros.ing[i.id] = true; msg = msg || 'Quantidade inválida em "' + i.nome.trim() + '".'; return; }
-    var p = parseNum(i.pesoUnitario);
-    ings.push({ id: i.id, nome: i.nome.trim(), qtd: q, unidade: i.unidade, contavel: !!i.contavel, pesoUnitario: i.contavel && isFinite(p) && p > 0 ? p : null });
+  var multi = f.partes.length > 1, partes = [], totalIng = 0;
+  erros.parte = {};
+  f.partes.forEach(function(pt){
+    var ings = [];
+    pt.ingredientes.forEach(function(i){
+      if (!i.nome.trim()) return;
+      if (i.unidade === 'a gosto'){ ings.push({ id: i.id, nome: i.nome.trim(), qtd: 0, unidade: i.unidade, contavel: false, pesoUnitario: null }); return; }
+      var q = parseNum(i.qtd);
+      if (!(isFinite(q) && q > 0)){ erros.ing[i.id] = true; msg = msg || 'Quantidade inválida em "' + i.nome.trim() + '".'; return; }
+      var p = parseNum(i.pesoUnitario);
+      ings.push({ id: i.id, nome: i.nome.trim(), qtd: q, unidade: i.unidade, contavel: !!i.contavel, pesoUnitario: i.contavel && isFinite(p) && p > 0 ? p : null });
+    });
+    var passos = pt.passos.map(function(s){ return s.texto.trim(); }).filter(Boolean);
+    if (!ings.length && !passos.length) return;            /* parte vazia é descartada */
+    var nomeP = multi ? pt.nome.trim() : '';
+    if (multi && !nomeP){ erros.parte[pt.id] = true; msg = msg || 'Dê um nome para cada parte (ex.: Massa, Recheio).'; }
+    totalIng += ings.length;
+    partes.push({ id: pt.id, nome: nomeP, ingredientes: ings, passos: passos });
   });
-  if (!ings.length && !msg) msg = 'Adicione ao menos um ingrediente.';
+  if (!totalIng && !msg) msg = 'Adicione ao menos um ingrediente.';
   return { ok: !msg, msg: msg, erros: erros, data: {
     nome: nome, topico: f.topico.trim() || 'Sem categoria', rendimentoQtd: rq, rendimentoUnidade: f.rendUnid.trim() || 'porções',
-    foto: f.foto, ingredientes: ings, passos: f.passos.map(function(p){ return p.trim(); }).filter(Boolean)
+    foto: f.foto, partes: partes
   } };
 }
 function salvarFormulario(){
@@ -1227,8 +1380,20 @@ function copiarTexto(txt, okMsg){
 function textoReceita(r){
   var f = fatorAtual(r), aj = Math.abs(f - 1) > 1e-9;
   var t = r.nome + '\n' + (aj ? 'Ajustada ×' + fmtNum(f) + ' — rende ≈ ' + fmtNum(r.rendimentoQtd * f, 1) : 'Rende ' + fmtNum(r.rendimentoQtd)) + ' ' + r.rendimentoUnidade + '\n\nIngredientes:\n';
-  r.ingredientes.forEach(function(i){ var c = calcularIngrediente(i, f); t += '• ' + c.textoQtd + ' ' + i.nome + '\n'; });
-  if (r.passos.length){ t += '\nModo de preparo:\n'; r.passos.forEach(function(p, i){ t += (i + 1) + '. ' + p + '\n'; }); }
+  var multi = temPartes(r);
+  r.partes.forEach(function(p, k){
+    if (!p.ingredientes.length) return;
+    if (multi) t += '\n' + nomeParte(p, k) + ':\n';
+    p.ingredientes.forEach(function(i){ var c = calcularIngrediente(i, f); t += '• ' + c.textoQtd + ' ' + i.nome + '\n'; });
+  });
+  if (totalPassos(r)){
+    t += '\nModo de preparo:\n';
+    r.partes.forEach(function(p, k){
+      if (!p.passos.length) return;
+      if (multi) t += '\n' + nomeParte(p, k) + ':\n';
+      p.passos.forEach(function(s, i){ t += (i + 1) + '. ' + s + '\n'; });
+    });
+  }
   return t;
 }
 function compartilhar(r){
@@ -1278,14 +1443,21 @@ function bindDetailDynamic(){
   });
   $all('#factorLine [data-act]').forEach(function(el){ el.onclick = function(ev){ acao(el.getAttribute('data-act'), el, ev); }; });
 }
+/* Sobe na árvore até achar a parte/ingrediente/passo do elemento (sem depender de Element.closest) */
+function acima(el, attr){ while (el && el.getAttribute){ if (el.hasAttribute(attr)) return el; el = el.parentNode; } return null; }
+function parteDe(el){ var w = acima(el, 'data-part'); return w ? acharParte(w.getAttribute('data-part')) : state.form.partes[0]; }
 function bindForm(){
   var f = state.form;
   $all('[data-f]').forEach(function(el){
     el.oninput = function(){ f[el.getAttribute('data-f')] = el.value; f.dirty = true; el.className = el.className.replace(' invalid', ''); };
   });
+  bindTopicCombo();
+  $all('[data-pname]').forEach(function(el){
+    el.oninput = function(){ parteDe(el).nome = el.value; f.dirty = true; el.className = el.className.replace(' invalid', ''); };
+  });
   $all('[data-ing]').forEach(function(row){
-    var id = row.getAttribute('data-ing');
-    var ing = f.ingredientes.filter(function(i){ return i.id === id; })[0];
+    var id = row.getAttribute('data-ing'), parte = parteDe(row);
+    var ing = parte.ingredientes.filter(function(i){ return i.id === id; })[0];
     Array.prototype.slice.call(row.querySelectorAll('[data-i]')).forEach(function(el){
       var campo = el.getAttribute('data-i');
       if (campo === 'contavel'){
@@ -1306,11 +1478,29 @@ function bindForm(){
         };
       }
     });
-    var del = row.querySelector('[data-act="del-ing"]');
-    if (del) del.onclick = function(){ f.ingredientes = f.ingredientes.filter(function(i){ return i.id !== id; }); if (!f.ingredientes.length) f.ingredientes.push(novoIngForm()); f.dirty = true; render(); };
   });
-  $all('[data-step]').forEach(function(el){
-    el.oninput = function(){ f.passos[parseInt(el.getAttribute('data-step'), 10)] = el.value; f.dirty = true; };
+  $all('[data-stepid]').forEach(function(row){
+    var parte = parteDe(row), id = row.getAttribute('data-stepid');
+    var st = parte.passos.filter(function(s){ return s.id === id; })[0];
+    row.querySelector('[data-step]').oninput = function(){ st.texto = this.value; f.dirty = true; };
+  });
+  /* Mover ingrediente/passo para outra parte */
+  $all('[data-move]').forEach(function(sel){
+    sel.onchange = function(){
+      var tipo = sel.getAttribute('data-move'), de = parteDe(sel), para = acharParte(sel.value);
+      if (!para || para === de) return;
+      var lista = tipo === 'ing' ? 'ingredientes' : 'passos';
+      var linha = acima(sel, tipo === 'ing' ? 'data-ing' : 'data-stepid');
+      var id = linha.getAttribute(tipo === 'ing' ? 'data-ing' : 'data-stepid');
+      var item = de[lista].filter(function(x){ return x.id === id; })[0];
+      de[lista] = de[lista].filter(function(x){ return x.id !== id; });
+      /* tira a linha vazia padrão da parte de destino, se houver */
+      para[lista] = para[lista].filter(function(x){ return tipo === 'ing' ? (x.nome.trim() || x.qtd) : x.texto.trim(); });
+      para[lista].push(item);
+      if (!de[lista].length) de[lista].push(tipo === 'ing' ? novoIngForm() : novoPassoForm());
+      f.dirty = true; render();
+      toast((tipo === 'ing' ? 'Ingrediente' : 'Passo') + ' movido para ' + nomeParte(para, f.partes.indexOf(para)));
+    };
   });
   var pi = document.getElementById('photoInput');
   if (pi) pi.onchange = function(){
@@ -1321,6 +1511,50 @@ function bindForm(){
     });
   };
 }
+function bindTopicCombo(){
+  var input = document.getElementById('fTopico'), btn = document.getElementById('topicBtn'), menu = document.getElementById('topicMenu');
+  if (!input) return;
+  var todos = topicos();
+  function abrir(filtrar){
+    var q = filtrar ? norm(input.value).trim() : '';
+    var lista = todos.filter(function(t){ return !q || norm(t[0]).indexOf(q) >= 0; });
+    if (filtrar && (!lista.length || (lista.length === 1 && norm(lista[0][0]) === q))){ fechar(); return; }
+    menu.innerHTML = lista.length
+      ? lista.map(function(t, i){
+          var sel = norm(t[0]) === norm(input.value).trim();
+          return '<button type="button" class="combo-item' + (sel ? ' sel' : '') + '" role="option" data-ti="' + todos.indexOf(t) + '">' +
+            '<span class="topic-dot" style="background:' + topicColor(t[0]) + '"></span>' + esc(t[0]) +
+            '<span class="c-count">' + t[1] + '</span></button>';
+        }).join('')
+      : '<div class="combo-empty">Nenhum tópico ainda. Digite o nome de um novo.</div>';
+    menu.className = 'combo-menu'; btn.className = 'combo-btn open'; btn.setAttribute('aria-expanded', 'true');
+    Array.prototype.slice.call(menu.querySelectorAll('[data-ti]')).forEach(function(it){
+      /* mousedown/touch não tiram o foco do campo antes do clique */
+      it.onmousedown = function(e){ e.preventDefault(); };
+      it.onclick = function(){
+        input.value = todos[parseInt(it.getAttribute('data-ti'), 10)][0];
+        state.form.topico = input.value; state.form.dirty = true; fechar();
+      };
+    });
+  }
+  function fechar(){ menu.className = 'combo-menu hidden'; btn.className = 'combo-btn'; btn.setAttribute('aria-expanded', 'false'); }
+  btn.onmousedown = function(e){ e.preventDefault(); };
+  btn.onclick = function(){ if (menu.className.indexOf('hidden') >= 0){ input.blur(); abrir(false); } else fechar(); };
+  var base = input.oninput;
+  input.oninput = function(){ if (base) base.call(input); abrir(true); };
+  input.onkeydown = function(e){ if (e.key === 'Escape') fechar(); };
+  document.onclick = function(e){ if (e.target !== btn && !menu.contains(e.target) && e.target !== input && !btn.contains(e.target)) fechar(); };
+}
+function focarUltimo(container, sel){
+  var els = container ? container.querySelectorAll(sel) : [];
+  if (els.length) els[els.length - 1].focus();
+}
+function containerDaParte(parte){
+  return state.form.partes.length > 1 ? document.querySelector('#app [data-part="' + parte.id + '"]') : document.getElementById('app');
+}
+function parteTemConteudo(p){
+  return p.ingredientes.some(function(i){ return i.nome.trim(); }) || p.passos.some(function(s){ return s.texto.trim(); });
+}
 function acao(act, el){
   var r = getRecipe(state.recipeId), f = state.form;
   switch (act){
@@ -1328,6 +1562,11 @@ function acao(act, el){
     case 'new': abrirFormulario(null); break;
     case 'back-topic': go(state.topic ? 'topic' : 'home'); break;
     case 'edit': abrirFormulario(state.recipeId); break;
+    case 'clone':
+      abrirFormulario(state.recipeId, true);
+      setTimeout(function(){ var n = document.getElementById('fNome'); if (n){ n.focus(); try { n.select(); } catch(e){} } }, 0);
+      break;
+    case 'cancel-clone': go('detail', { recipeId: state.recipeId }, false); break;
     case 'share': if (r) compartilhar(r); break;
     case 'delete':
       if (!r) break;
@@ -1339,20 +1578,55 @@ function acao(act, el){
       });
       break;
     case 'reset-scale': state.scale.yieldVal = ''; state.scale.haveVal = ''; render(); break;
-    case 'add-ing':
-      f.ingredientes.push(novoIngForm()); f.dirty = true; render();
-      var rows = document.querySelectorAll('#app [data-ing]');
-      if (rows.length){ var n = rows[rows.length - 1].querySelector('[data-i="nome"]'); if (n) n.focus(); }
-      break;
-    case 'add-step':
-      f.passos.push(''); f.dirty = true; render();
-      var tas = document.querySelectorAll('#app [data-step]');
-      if (tas.length) tas[tas.length - 1].focus();
-      break;
-    case 'del-step':
-      f.passos.splice(parseInt(el.getAttribute('data-idx'), 10), 1);
-      if (!f.passos.length) f.passos.push('');
+    case 'add-ing': {
+      var pa = parteDe(el); pa.ingredientes.push(novoIngForm()); f.dirty = true; render();
+      focarUltimo(containerDaParte(pa), '[data-i="nome"]'); break;
+    }
+    case 'del-ing': {
+      var pd = parteDe(el), idI = acima(el, 'data-ing').getAttribute('data-ing');
+      pd.ingredientes = pd.ingredientes.filter(function(i){ return i.id !== idI; });
+      if (!pd.ingredientes.length) pd.ingredientes.push(novoIngForm());
       f.dirty = true; render(); break;
+    }
+    case 'add-step': {
+      var ps = parteDe(el); ps.passos.push(novoPassoForm()); f.dirty = true; render();
+      focarUltimo(containerDaParte(ps), '[data-step]'); break;
+    }
+    case 'del-step': {
+      var pp = parteDe(el), idS = acima(el, 'data-stepid').getAttribute('data-stepid');
+      pp.passos = pp.passos.filter(function(s){ return s.id !== idS; });
+      if (!pp.passos.length) pp.passos.push(novoPassoForm());
+      f.dirty = true; render(); break;
+    }
+    case 'add-part': {
+      var nova = novaParteForm('');
+      f.partes.push(nova); f.dirty = true; render();
+      /* ao dividir, o foco vai para o nome da 1ª parte, que já tem os ingredientes */
+      var alvo = f.partes.length === 2 && !f.partes[0].nome ? f.partes[0] : nova;
+      var inp = document.querySelector('#app [data-part="' + alvo.id + '"] [data-pname]');
+      if (inp){ inp.focus(); if (inp.scrollIntoView) inp.scrollIntoView({ block: 'center' }); }
+      break;
+    }
+    case 'part-up': case 'part-down': {
+      var pm = parteDe(el), i0 = f.partes.indexOf(pm), i1 = i0 + (act === 'part-up' ? -1 : 1);
+      if (i1 < 0 || i1 >= f.partes.length) break;
+      f.partes[i0] = f.partes[i1]; f.partes[i1] = pm; f.dirty = true; render();
+      var inp2 = document.querySelector('#app [data-part="' + pm.id + '"] [data-pname]');
+      if (inp2 && inp2.scrollIntoView) inp2.scrollIntoView({ block: 'center' });
+      break;
+    }
+    case 'del-part': {
+      var px = parteDe(el), kx = f.partes.indexOf(px);
+      var remover = function(){
+        f.partes.splice(kx, 1);
+        if (f.partes.length === 1) f.partes[0].nome = '';   /* voltou a ser receita de parte única */
+        f.dirty = true; render();
+      };
+      if (parteTemConteudo(px)){
+        confirmModal({ title: 'Remover "' + nomeParte(px, kx) + '"?', text: 'Os ingredientes e passos desta parte serão apagados. Para mantê-los, mova-os para outra parte antes.', ok: 'Remover', danger: true }, remover);
+      } else remover();
+      break;
+    }
     case 'remove-photo': f.foto = null; f.dirty = true; render(); break;
     case 'save': salvarFormulario(); break;
     case 'cancel-edit': go('detail', { recipeId: f.id }, false, 'replace'); break;

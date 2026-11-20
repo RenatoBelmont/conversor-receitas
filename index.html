@@ -431,41 +431,43 @@
     @page{ size:A4; margin:8mm; }
     html, body{ background:#FBF5F0 !important; padding:0 !important; }
     body > *:not(#printSheet){ display:none !important; }
-    #printSheet{ display:block; }
-    .ps{ -webkit-box-decoration-break:clone; box-decoration-break:clone; font-family:'LoraFicha', Georgia, 'Times New Roman', serif; color:#4E433D; background:#FBF5F0; border:1px solid #CDAE9C; border-radius:18px;
-      padding:12mm 12mm 8mm; -webkit-print-color-adjust:exact; print-color-adjust:exact; font-size:10.5pt; line-height:1.45; }
-    .ps-head{ display:flex; align-items:flex-start; margin-bottom:9mm; }
-    .ps-hl{ flex:1; min-width:0; }
-    .ps-topic{ font-size:8.5pt; letter-spacing:.15em; text-transform:uppercase; color:#C27B5D; }
-    .ps h1{ font-weight:400; font-size:28pt; line-height:1.1; color:#5B4A42; margin:2mm 0 0; }
-    .ps-swash{ display:block; width:60%; max-width:95mm; height:3.2mm; margin:1.5mm 0 4mm; }
-    .ps-swash path{ fill:none; stroke:#A3B08B; stroke-width:2.6; stroke-linecap:round; }
-    .ps-pills{ display:flex; flex-wrap:wrap; }
-    .ps-pill{ display:inline-flex; align-items:center; background:#F6E0D4; color:#8A5A46; border-radius:99px; padding:1.4mm 3.5mm 1.4mm 2.6mm; margin:0 2.5mm 2mm 0; font-size:9.5pt; }
-    .ps-pill svg{ width:4.2mm; height:4.2mm; margin-right:1.6mm; color:#C27B5D; }
-    .ps-adj{ font-style:italic; font-size:9pt; color:#C27B5D; margin-top:1mm; }
-    .ps-photo{ width:62mm; height:52mm; flex-shrink:0; margin-left:8mm; padding:2mm; border:1px dashed #CDAE9C; border-radius:5mm; }
-    .ps-photo img{ width:100%; height:100%; object-fit:cover; border-radius:4mm; display:block; }
-    .ps-sec{ position:relative; border:1px solid; border-radius:5mm; padding:9mm 6mm 4mm; margin:9mm 0 0; }
-    .ps-sec h2{ position:absolute; top:-5mm; left:3mm; margin:0; height:10mm; line-height:10mm; padding:0 8mm; border-radius:5mm; color:#fff; font-weight:400; font-size:14pt; }
-    .ps-sec-g{ border-color:#AFBB9C; } .ps-sec-g h2{ background:#A3B08B; }
-    .ps-sec-b{ border-color:#AEBCC9; } .ps-sec-b h2{ background:#94A6B6; }
-    .ps-part{ font-weight:600; font-size:9pt; letter-spacing:.08em; text-transform:uppercase; margin:2mm 0 1mm; }
-    .ps-part.ps-g{ color:#738560; } .ps-part.ps-b{ color:#677D91; }
-    .ps-ing{ list-style:none; margin:0 0 2mm; padding:0; columns:2; column-gap:8mm; }
-    .ps-ing li{ display:flex; break-inside:avoid; page-break-inside:avoid; padding:1.2mm 0; border-bottom:.6pt solid #E4D7CE; }
-    .ps-box{ width:3.4mm; height:3.4mm; border:.8pt solid #9B8A80; border-radius:.8mm; flex-shrink:0; margin:1mm 3mm 0 0; }
-    .ps-ing b{ font-weight:600; color:#5B4A42; }
-    .ps-ing small{ display:block; font-style:italic; font-size:8pt; color:#9A8A80; }
-    .ps-ing small.w{ color:#C27B5D; }
-    .ps-steps{ list-style:none; margin:0 0 2mm; padding:0; }
-    .ps-steps li{ display:flex; align-items:flex-start; break-inside:avoid; page-break-inside:avoid; padding:1.6mm 0; border-bottom:.6pt solid #E4D7CE; }
-    .ps-n{ width:7mm; height:7mm; border-radius:50%; background:#94A6B6; color:#fff; font-weight:600; font-size:9.5pt; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-right:4mm; }
-    .ps-tips{ display:flex; background:#F6E0D4; border-radius:6mm; padding:5mm 6mm; margin-top:9mm; break-inside:avoid; page-break-inside:avoid; }
-    .ps-tips h3{ width:46mm; flex-shrink:0; margin:0 6mm 0 0; padding-right:6mm; border-right:.8pt solid #CDAE9C; font-weight:400; font-style:italic; font-size:12.5pt; color:#8A5A46; }
-    .ps-tips p{ margin:0; white-space:pre-wrap; font-size:10pt; }
-    .ps-foot{ text-align:center; font-style:italic; font-size:8pt; color:#9A8A80; margin-top:7mm; }
+    #printSheet{ display:block !important; }
   }
+  /* estilos da ficha valem fora do print também, para o app medir a altura antes de imprimir */
+  #printSheet.medindo{ display:block !important; position:fixed; left:-9999px; top:0; width:194mm; visibility:hidden; }
+    .ps{ -webkit-box-decoration-break:clone; box-decoration-break:clone; font-family:'LoraFicha', Georgia, 'Times New Roman', serif; color:#4E433D; background:#FBF5F0; border:1px solid #CDAE9C; border-radius:18px;
+    padding:12mm 12mm 8mm; -webkit-print-color-adjust:exact; print-color-adjust:exact; font-size:10.5pt; line-height:1.45; }
+  .ps-head{ display:flex; align-items:flex-start; margin-bottom:9mm; }
+  .ps-hl{ flex:1; min-width:0; }
+  .ps-topic{ font-size:8.5pt; letter-spacing:.15em; text-transform:uppercase; color:#C27B5D; }
+  .ps h1{ font-weight:400; font-size:28pt; line-height:1.1; color:#5B4A42; margin:2mm 0 0; }
+  .ps-swash{ display:block; width:60%; max-width:95mm; height:3.2mm; margin:1.5mm 0 4mm; }
+  .ps-swash path{ fill:none; stroke:#A3B08B; stroke-width:2.6; stroke-linecap:round; }
+  .ps-pills{ display:flex; flex-wrap:wrap; }
+  .ps-pill{ display:inline-flex; align-items:center; background:#F6E0D4; color:#8A5A46; border-radius:99px; padding:1.4mm 3.5mm 1.4mm 2.6mm; margin:0 2.5mm 2mm 0; font-size:9.5pt; }
+  .ps-pill svg{ width:4.2mm; height:4.2mm; margin-right:1.6mm; color:#C27B5D; }
+  .ps-adj{ font-style:italic; font-size:9pt; color:#C27B5D; margin-top:1mm; }
+  .ps-photo{ width:62mm; height:52mm; flex-shrink:0; margin-left:8mm; padding:2mm; border:1px dashed #CDAE9C; border-radius:5mm; }
+  .ps-photo img{ width:100%; height:100%; object-fit:cover; border-radius:4mm; display:block; }
+  .ps-sec{ position:relative; border:1px solid; border-radius:5mm; padding:9mm 6mm 4mm; margin:9mm 0 0; }
+  .ps-sec h2{ position:absolute; top:-5mm; left:3mm; margin:0; height:10mm; line-height:10mm; padding:0 8mm; border-radius:5mm; color:#fff; font-weight:400; font-size:14pt; }
+  .ps-sec-g{ border-color:#AFBB9C; } .ps-sec-g h2{ background:#A3B08B; }
+  .ps-sec-b{ border-color:#AEBCC9; } .ps-sec-b h2{ background:#94A6B6; }
+  .ps-part{ font-weight:600; font-size:9pt; letter-spacing:.08em; text-transform:uppercase; margin:2mm 0 1mm; }
+  .ps-part.ps-g{ color:#738560; } .ps-part.ps-b{ color:#677D91; }
+  .ps-ing{ list-style:none; margin:0 0 2mm; padding:0; columns:2; column-gap:8mm; }
+  .ps-ing li{ display:flex; break-inside:avoid; page-break-inside:avoid; padding:1.2mm 0; border-bottom:.6pt solid #E4D7CE; }
+  .ps-box{ width:3.4mm; height:3.4mm; border:.8pt solid #9B8A80; border-radius:.8mm; flex-shrink:0; margin:1mm 3mm 0 0; }
+  .ps-ing b{ font-weight:600; color:#5B4A42; }
+  .ps-ing small{ display:block; font-style:italic; font-size:8pt; color:#9A8A80; }
+  .ps-ing small.w{ color:#C27B5D; }
+  .ps-steps{ list-style:none; margin:0 0 2mm; padding:0; }
+  .ps-steps li{ display:flex; align-items:flex-start; break-inside:avoid; page-break-inside:avoid; padding:1.6mm 0; border-bottom:.6pt solid #E4D7CE; }
+  .ps-n{ width:7mm; height:7mm; border-radius:50%; background:#94A6B6; color:#fff; font-weight:600; font-size:9.5pt; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-right:4mm; }
+  .ps-tips{ display:flex; background:#F6E0D4; border-radius:6mm; padding:5mm 6mm; margin-top:9mm; break-inside:avoid; page-break-inside:avoid; }
+  .ps-tips h3{ width:46mm; flex-shrink:0; margin:0 6mm 0 0; padding-right:6mm; border-right:.8pt solid #CDAE9C; font-weight:400; font-style:italic; font-size:12.5pt; color:#8A5A46; }
+  .ps-tips p{ margin:0; white-space:pre-wrap; font-size:10pt; }
+  .ps-foot{ text-align:center; font-style:italic; font-size:8pt; color:#9A8A80; margin-top:7mm; }
 
   /* ===== Backup ===== */
   .help-note{ display:flex; font-size:13px; line-height:1.6; color: rgb(var(--text-secondary)); border:1px solid rgb(var(--border-default)); border-radius:14px; background-color: rgb(var(--bg-surface-2) / .5); padding:12px 14px; margin-bottom:14px; }
@@ -558,10 +560,10 @@
 <script src="config.js"></script>
 <script>
 /* =====================================================================
-   Conversor de Receitas — v2.4.0
+   Conversor de Receitas — v2.4.1
    Design: Waypoint. Sem dependências, funciona offline (PWA).
    ===================================================================== */
-var APP_VERSION = '2.4.0';
+var APP_VERSION = '2.4.1';
 var STORE_KEY = 'receitas_app_v1';      /* mesma chave da v1: dados antigos continuam */
 var THEME_KEY = 'receitas_tema';
 var EXPORT_KEY = 'receitas_ultimo_backup';
@@ -1692,10 +1694,22 @@ function gerarPdfReceita(r){
   var temFoto = !!r.foto, FW = 62, FH = 52;
   return Promise.all([carregarJsPDF(), carregarFontesPdf(), temFoto ? prepararFoto(r.foto, FW, FH, FICHA.fundo) : Promise.resolve(null)]).then(function(res){
     var JsPDF = res[0], fontes = res[1], foto = res[2];
+    /* Cabe em uma página? Tenta no tamanho normal e, se não couber, reduz tudo por igual
+       (até 81%). Só uma receita grande de verdade vai para 2+ páginas — e aí no tamanho normal. */
+    var ESCALAS = [1, 0.94, 0.88, 0.81];
+    for (var e = 0; e < ESCALAS.length; e++){
+      var d = montar(ESCALAS[e]);
+      if (d.getNumberOfPages() === 1) return d;
+    }
+    return montar(1);
+
+  /* k = escala: a página "lógica" tem 210/k × 297/k mm e é reduzida para caber no A4 */
+  function montar(k){
     var doc = new JsPDF({ unit: 'mm', format: 'a4', compress: true });
     var FAM = 'times';
     if (fontes){ fontes.forEach(function(ft){ doc.addFileToVFS(ft.arquivo, ft.b64); doc.addFont(ft.arquivo, 'Lora', ft.estilo); }); FAM = 'Lora'; }
-    var W = 210, H = 297, M = 20, larg = W - 2 * M, y = 0, LIM = H - 18;
+    var W = 210 / k, H = 297 / k, M = 20, larg = W - 2 * M, y = 0, LIM = H - 18;
+    var PT = 72 / 25.4;
 
     function cor(hx){ var c = hexRgb(hx); doc.setTextColor(c[0], c[1], c[2]); }
     function tinta(hx){ var c = hexRgb(hx); doc.setFillColor(c[0], c[1], c[2]); }
@@ -1704,6 +1718,8 @@ function gerarPdfReceita(r){
     function lh(tam){ return tam * 0.3528 * 1.3; }
     function quebra(txt, est, tam, w){ fonte(est, tam); return doc.splitTextToSize(pdfTexto(txt), w); }
     function pintarPagina(){
+      /* matriz de escala do PDF (cm): encolhe a página lógica para o A4 real, ancorada no topo */
+      if (k !== 1) doc.internal.write(k.toFixed(4) + ' 0 0 ' + k.toFixed(4) + ' 0 ' + (297 * PT * (1 - k)).toFixed(3) + ' cm');
       tinta(FICHA.fundo); doc.rect(0, 0, W, H, 'F');
       traco(FICHA.moldura, 0.45); doc.roundedRect(8, 8, W - 16, H - 16, 6, 6, 'S');
     }
@@ -1888,6 +1904,7 @@ function gerarPdfReceita(r){
     }
     doc.setProperties({ title: pdfTexto(r.nome), creator: 'Conversor de Receitas v' + APP_VERSION });
     return doc;
+  }
   });
 }
 function baixarBlob(blob, nome){
@@ -1942,9 +1959,25 @@ function folhaImpressaoHtml(r){
     (r.dicas ? '<section class="ps-tips"><h3>Dicas e Observações</h3><p>' + esc(r.dicas) + '</p></section>' : '') +
     '<div class="ps-foot">Conversor de Receitas · ' + new Date().toLocaleDateString('pt-BR') + '</div></div>';
 }
+/* Mede a ficha na largura do A4 e, se passar de uma folha, reduz (até 81%) para caber em uma */
+function ajustarFolha(){
+  var box = document.getElementById('printSheet'), ps = box.firstChild;
+  if (!ps) return;
+  ps.style.zoom = '';
+  box.className = 'medindo';
+  var alt = ps.getBoundingClientRect().height, disp = 279 * 96 / 25.4;      /* 297 mm − margens */
+  box.className = '';
+  if (alt > disp && disp / alt >= 0.81) ps.style.zoom = (disp / alt - 0.005).toFixed(3);
+}
 function imprimirReceita(){
   var r = getRecipe(state.recipeId); if (!r) return;
   document.getElementById('printSheet').innerHTML = folhaImpressaoHtml(r);
+  var fontes = (document.fonts && document.fonts.load)
+    ? Promise.all(['400 10pt LoraFicha', 'italic 400 10pt LoraFicha', '600 10pt LoraFicha'].map(function(f){ return document.fonts.load(f); })).catch(function(){})
+    : Promise.resolve();
+  fontes.then(function(){ ajustarFolha(); abrirImpressao(); });
+}
+function abrirImpressao(){
   document.body.className += ' printing';
   setTimeout(function(){
     try { window.print(); } catch(e){ toast('Este aparelho não abriu a impressão. Use "Baixar PDF".', 'err'); }

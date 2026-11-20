@@ -2,7 +2,7 @@
   "name": "Conversor de Receitas",
   "short_name": "Receitas",
   "description": "Guarde suas receitas por tópicos e recalcule os ingredientes para qualquer quantidade, sem frações estranhas.",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

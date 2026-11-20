@@ -409,6 +409,33 @@
   .part-label .count{ margin-left:auto; font-weight:500; letter-spacing:0; color: rgb(var(--text-muted)); }
   .progress-track + .hint + .part-label, .card-title + .part-label{ border-top:none; padding-top:0; margin-top:12px; }
 
+  /* ===== Menu Compartilhar / PDF ===== */
+  .sheet-list{ padding:0 10px 10px; }
+  .sheet-item{ display:flex; align-items:center; width:100%; text-align:left; padding:10px 8px; border-radius:var(--radius-lg); min-height:56px; }
+  .sheet-item:active{ background-color: rgb(var(--bg-surface-2)); }
+  .sheet-ico{ width:40px; height:40px; flex-shrink:0; margin-right:12px; border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center;
+    background-color: rgb(var(--bg-surface-2)); color: rgb(var(--text-primary)); }
+  .sheet-item b{ display:block; font-size:15px; }
+  .sheet-item small{ display:block; font-size:12px; color: rgb(var(--text-secondary)); margin-top:1px; }
+
+  /* ===== Impressão: só a receita, sempre em tema claro ===== */
+  @media print{
+    :root, .dark{ --bg-app:255 255 255; --bg-surface:255 255 255; --bg-surface-2:255 255 255; --border-default:210 204 192; --text-primary:0 0 0; --text-secondary:60 60 60; --text-muted:110 110 110; --shadow-card:none; }
+    html body{ background:#fff !important; padding:0 !important; color:#000; }
+    .app-header, .tabs-wrap, footer, .toast, #modalRoot, .back-btn, .btn-row, .seg, .field, .factor-line .link-btn,
+    .progress-track, .ing-list + .hint, #ingCard > .hint, .ing-check, .photo-remove{ display:none !important; }
+    main{ max-width:none; padding:0; }
+    .view{ animation:none !important; -webkit-animation:none !important; }
+    .card{ border:none !important; box-shadow:none !important; padding:0 !important; margin-top:14px !important; background:none !important; -webkit-backdrop-filter:none; backdrop-filter:none; }
+    .card-title{ font-size:18px; }
+    .card:first-of-type .card-title{ display:none; }
+    .ing-item.done .ing-qty, .ing-item.done .ing-name{ text-decoration:none; color:#000; }
+    .ing-item{ padding:5px 0; }
+    .steps li, .ing-list li{ break-inside:avoid; page-break-inside:avoid; }
+    .photo-wrap{ max-width:60%; }
+    .badge{ border:none; padding-left:0; background:none; }
+  }
+
   /* ===== Backup ===== */
   .help-note{ display:flex; font-size:13px; line-height:1.6; color: rgb(var(--text-secondary)); border:1px solid rgb(var(--border-default)); border-radius:14px; background-color: rgb(var(--bg-surface-2) / .5); padding:12px 14px; margin-bottom:14px; }
   .help-note svg{ margin-right:10px; margin-top:2px; color: rgb(var(--text-muted)); }
@@ -495,12 +522,13 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div id="modalRoot"></div>
 
+<script src="config.js"></script>
 <script>
 /* =====================================================================
-   Conversor de Receitas — v2.2.0
+   Conversor de Receitas — v2.3.0
    Design: Waypoint. Sem dependências, funciona offline (PWA).
    ===================================================================== */
-var APP_VERSION = '2.2.0';
+var APP_VERSION = '2.3.0';
 var STORE_KEY = 'receitas_app_v1';      /* mesma chave da v1: dados antigos continuam */
 var THEME_KEY = 'receitas_tema';
 var EXPORT_KEY = 'receitas_ultimo_backup';
@@ -533,6 +561,12 @@ var ICONS = {
   'chevron-up':'<path d="m18 15-6-6-6 6"/>',
   'chevron-down':'<path d="m6 9 6 6 6-6"/>',
   'copy':     '<rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+  'cloud':    '<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>',
+  'cloud-down':'<path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="M12 12v9"/><path d="m8 17 4 4 4-4"/>',
+  'file-text':'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8M16 13H8M16 17H8"/>',
+  'printer':  '<path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/>',
+  'message':  '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+  'log-out':  '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
   'folder':   '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>'
 };
 function ico(name, cls){
@@ -1009,7 +1043,7 @@ function viewDetail(){
   h += '<div class="btn-row two-col" style="margin-top:14px">' +
        '<button class="btn btn-ghost" data-act="edit">' + ico('pencil') + 'Editar</button>' +
        '<button class="btn btn-ghost" data-act="clone">' + ico('copy') + 'Duplicar</button>' +
-       '<button class="btn btn-ghost" data-act="share">' + ico('share') + 'Compartilhar</button>' +
+       '<button class="btn btn-ghost" data-act="share">' + ico('share') + 'Compartilhar / PDF</button>' +
        '<button class="btn btn-danger" data-act="delete">' + ico('trash') + 'Excluir</button></div>';
   return h;
 }
@@ -1274,6 +1308,8 @@ function viewBackup(){
        (podeCompartilharArquivo() ? '<div class="hint">"Enviar" abre o compartilhamento do Android (WhatsApp, Drive, Bluetooth…). O arquivo vai como .txt — o Android não envia .json — e importa normalmente.</div>' : '') +
        '<div class="hint">' + (ult ? 'Último backup: ' + esc(fmtData(parseInt(ult, 10))) : 'Nenhum backup feito ainda.') + '</div></div>';
 
+  h += driveCardHtml();
+
   h += '<div class="card card-pad"><div class="card-title">Importar</div>' +
        '<div class="hint" style="margin:6px 0 12px">Escolha um backup exportado por este app (.json ou .txt).</div>' +
        '<label class="btn btn-ghost btn-block file-btn">' + ico('upload') + 'Escolher arquivo<input type="file" accept=".json,.txt,application/json,text/plain" id="importInput"></label>';
@@ -1333,9 +1369,14 @@ function exportarCompartilhar(){
 function lerImport(file){
   var reader = new FileReader();
   reader.onerror = function(){ toast('Não foi possível ler o arquivo.', 'err'); };
-  reader.onload = function(){
+  reader.onload = function(){ processarImport(reader.result, file.name); };
+  reader.readAsText(file);
+}
+/* Usado pelo arquivo local e pelo backup do Drive: valida e mostra a prévia (Mesclar / Substituir) */
+function processarImport(texto, origem){
+  {
     var data;
-    try { data = JSON.parse(reader.result); } catch(e){ toast('Arquivo inválido: não é um JSON.', 'err'); return; }
+    try { data = JSON.parse(texto); } catch(e){ toast('Arquivo inválido: não é um JSON.', 'err'); return; }
     var lista = Array.isArray(data) ? data : (data && Array.isArray(data.receitas) ? data.receitas : null);
     if (!lista){ toast('Este JSON não parece um backup de receitas.', 'err'); return; }
     if (data && data.schema && data.schema > EXPORT_SCHEMA){ toast('Backup feito por uma versão mais nova do app. Atualize o app.', 'err'); return; }
@@ -1343,11 +1384,10 @@ function lerImport(file){
     if (!validas.length){ toast('Nenhuma receita válida no arquivo.', 'err'); return; }
     var ids = {}; state.recipes.forEach(function(r){ ids[r.id] = true; });
     var existentes = validas.filter(function(r){ return ids[r.id]; }).length;
-    state.importPreview = { arquivo: file.name, receitas: validas, novas: validas.length - existentes, existentes: existentes,
+    state.importPreview = { arquivo: origem, receitas: validas, novas: validas.length - existentes, existentes: existentes,
       ignoradas: lista.length - validas.length, exportadoEm: data && data.exportadoEm ? data.exportadoEm : null };
     render();
-  };
-  reader.readAsText(file);
+  }
 }
 function aplicarImport(modo){
   var p = state.importPreview; if (!p) return;
@@ -1363,6 +1403,319 @@ function aplicarImport(modo){
   state.importPreview = null;
   toast(n + ' ' + plural(n, 'receita importada', 'receitas importadas'));
   render();
+}
+
+/* ===================================================================
+   Google Drive — backup na nuvem
+   Login por redirecionamento na mesma janela (OAuth 2.0 "client-side",
+   response_type=token). Não usa a biblioteca de pop-up do Google:
+   pop-ups não funcionam bem em app instalado (PWA) no Android.
+   Escopo drive.file: o app só enxerga os arquivos que ele mesmo criou.
+   =================================================================== */
+var DRIVE = {
+  scope: 'https://www.googleapis.com/auth/drive.file',
+  tokenKey: 'receitas_drive_token',
+  pendKey: 'receitas_drive_pendente',
+  ultKey: 'receitas_drive_ultimo',
+  arquivo: 'Conversor de Receitas - backup.json',
+  ocupado: null            /* 'save' | 'restore' enquanto trabalha */
+};
+function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function lsSet(k, v){ try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch(e){} }
+function driveClientId(){ var c = window.RECEITAS_CONFIG || {}; return String(c.googleClientId || '').trim(); }
+function driveConfigurado(){ return /\.apps\.googleusercontent\.com$/.test(driveClientId()); }
+/* Sempre a pasta do app, sem "index.html" — tem que bater letra por letra com o cadastrado no Google */
+function driveRedirectUri(){ return location.origin + location.pathname.replace(/index\.html$/, ''); }
+function driveToken(){
+  try { var t = JSON.parse(lsGet(DRIVE.tokenKey) || 'null'); return (t && t.exp > Date.now()) ? t.token : null; } catch(e){ return null; }
+}
+function driveLogin(acao){
+  var st = uid() + uid();
+  lsSet(DRIVE.pendKey, JSON.stringify({ acao: acao, state: st, t: Date.now() }));
+  var q = {
+    client_id: driveClientId(), redirect_uri: driveRedirectUri(), response_type: 'token',
+    scope: DRIVE.scope, include_granted_scopes: 'true', state: st
+  };
+  var url = 'https://accounts.google.com/o/oauth2/v2/auth?' + Object.keys(q).map(function(k){ return k + '=' + encodeURIComponent(q[k]); }).join('&');
+  location.assign(url);
+}
+/* Chamado na inicialização: trata a volta do Google (#access_token=… ou #error=…) */
+function driveRetorno(){
+  var hs = location.hash || '';
+  if (hs.indexOf('access_token=') < 0 && hs.indexOf('error=') < 0) return null;
+  var p = {};
+  hs.replace(/^#/, '').split('&').forEach(function(par){ var i = par.indexOf('='); if (i > 0) p[decodeURIComponent(par.slice(0, i))] = decodeURIComponent(par.slice(i + 1).replace(/\+/g, ' ')); });
+  try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
+  var pend = null; try { pend = JSON.parse(lsGet(DRIVE.pendKey) || 'null'); } catch(e){}
+  lsSet(DRIVE.pendKey, null);
+  if (!pend || !p.state || pend.state !== p.state){ return { erro: 'Login do Google não confirmado. Tente de novo.' }; }
+  if (p.error) return { erro: p.error === 'access_denied' ? 'Acesso ao Drive não autorizado.' : 'O Google recusou o acesso (' + p.error + ').' };
+  if ((p.scope || '').indexOf('drive.file') < 0) return { erro: 'Permissão do Drive não concedida. Marque a caixa do Drive ao entrar.' };
+  var seg = parseInt(p.expires_in, 10) || 3600;
+  lsSet(DRIVE.tokenKey, JSON.stringify({ token: p.access_token, exp: Date.now() + (seg - 60) * 1000 }));
+  return { acao: pend.acao };
+}
+function driveFetch(url, opts){
+  opts = opts || {};
+  opts.headers = opts.headers || {};
+  opts.headers.Authorization = 'Bearer ' + driveToken();
+  return fetch(url, opts).then(function(res){
+    if (res.status === 401){ lsSet(DRIVE.tokenKey, null); var e = new Error('reauth'); e.reauth = true; throw e; }
+    if (!res.ok) return res.text().then(function(t){ var m = ''; try { m = JSON.parse(t).error.message; } catch(x){} throw new Error(m || ('HTTP ' + res.status)); });
+    return res;
+  });
+}
+function driveAcharArquivo(){
+  var q = "appProperties has { key='app' and value='conversor-receitas' } and trashed=false";
+  return driveFetch('https://www.googleapis.com/drive/v3/files?spaces=drive&orderBy=modifiedTime%20desc&pageSize=1&fields=files(id,name,modifiedTime)&q=' + encodeURIComponent(q))
+    .then(function(r){ return r.json(); }).then(function(j){ return (j.files && j.files[0]) || null; });
+}
+function driveSalvar(){
+  var corpo = montarExport();
+  return driveAcharArquivo().then(function(arq){
+    if (arq){
+      /* atualiza o mesmo arquivo — o Drive guarda as versões anteriores */
+      return driveFetch('https://www.googleapis.com/upload/drive/v3/files/' + arq.id + '?uploadType=media', {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json; charset=UTF-8' }, body: corpo });
+    }
+    var b = 'receitas' + uid();
+    var meta = { name: DRIVE.arquivo, mimeType: 'application/json', appProperties: { app: 'conversor-receitas' } };
+    var body = '--' + b + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(meta) +
+               '\r\n--' + b + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' + corpo + '\r\n--' + b + '--';
+    return driveFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
+      method: 'POST', headers: { 'Content-Type': 'multipart/related; boundary=' + b }, body: body });
+  }).then(function(){
+    lsSet(DRIVE.ultKey, String(Date.now())); marcarBackup();
+    toast('Backup salvo no Google Drive');
+  });
+}
+function driveRestaurar(){
+  return driveAcharArquivo().then(function(arq){
+    if (!arq){ toast('Nenhum backup deste app no seu Drive ainda.', 'err'); return; }
+    return driveFetch('https://www.googleapis.com/drive/v3/files/' + arq.id + '?alt=media')
+      .then(function(r){ return r.text(); })
+      .then(function(t){ processarImport(t, 'Google Drive · ' + fmtData(Date.parse(arq.modifiedTime))); });
+  });
+}
+function driveExecutar(acao, jaLogou){
+  if (!driveConfigurado()){ toast('O Drive ainda não foi configurado (veja docs/google-drive.md).', 'err'); return; }
+  if (navigator.onLine === false){ toast('Sem internet. Conecte-se para usar o Drive.', 'err'); return; }
+  if (!driveToken()){ driveLogin(acao); return; }
+  DRIVE.ocupado = acao; if (state.view === 'backup') render();
+  (acao === 'save' ? driveSalvar() : driveRestaurar()).then(function(){
+    DRIVE.ocupado = null; if (state.view === 'backup') render();
+  }, function(e){
+    DRIVE.ocupado = null; if (state.view === 'backup') render();
+    if (e && e.reauth && !jaLogou){ driveLogin(acao); return; }
+    toast('Erro no Google Drive: ' + (e && e.message ? e.message : 'falha de conexão'), 'err');
+  });
+}
+function driveSair(){
+  var t = driveToken();
+  lsSet(DRIVE.tokenKey, null);
+  if (t){ try { fetch('https://oauth2.googleapis.com/revoke?token=' + encodeURIComponent(t), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).catch(function(){}); } catch(e){} }
+  toast('Desconectado do Google'); render();
+}
+function driveCardHtml(){
+  var h = '<div class="card card-pad"><div class="card-title">Google Drive <span class="muted">' + (driveToken() ? 'conectado' : '') + '</span></div>';
+  if (!driveConfigurado()){
+    return h + '<div class="hint" style="margin-top:8px">Ainda não configurado. É preciso criar um "ID do cliente" no Google Cloud e colocá-lo no arquivo <strong>config.js</strong> — o passo a passo está em <strong>docs/google-drive.md</strong> no GitHub.</div></div>';
+  }
+  var ult = lsGet(DRIVE.ultKey), oc = DRIVE.ocupado;
+  h += '<div class="hint" style="margin:6px 0 12px">Guarda o backup na sua conta Google. O app só tem acesso ao próprio arquivo de backup, não ao resto do seu Drive.</div>' +
+    '<div class="btn-row"><button class="btn btn-primary" data-act="drive-save"' + (oc || !state.recipes.length ? ' disabled' : '') + '>' + ico('cloud') + (oc === 'save' ? 'Salvando…' : 'Salvar no Drive') + '</button>' +
+    '<button class="btn btn-ghost" data-act="drive-restore"' + (oc ? ' disabled' : '') + '>' + ico('cloud-down') + (oc === 'restore' ? 'Buscando…' : 'Restaurar') + '</button></div>' +
+    '<div class="hint">' + (ult ? 'Último envio ao Drive: ' + esc(fmtData(parseInt(ult, 10))) : 'Nenhum backup enviado ao Drive deste aparelho.') + '</div>' +
+    (driveToken() ? '<div><button class="link-btn" data-act="drive-logout">Desconectar do Google</button></div>' : '') +
+    '</div>';
+  return h;
+}
+
+/* ===================================================================
+   PDF e impressão
+   jsPDF (vendor/jspdf.umd.min.js, MIT) carregado só quando pedido —
+   fica guardado pelo service worker e funciona offline.
+   =================================================================== */
+var jsPdfCarregando = null;
+function carregarJsPDF(){
+  if (window.jspdf && window.jspdf.jsPDF) return Promise.resolve(window.jspdf.jsPDF);
+  if (jsPdfCarregando) return jsPdfCarregando;
+  jsPdfCarregando = new Promise(function(ok, falha){
+    var s = document.createElement('script');
+    s.src = 'vendor/jspdf.umd.min.js';
+    s.onload = function(){ window.jspdf && window.jspdf.jsPDF ? ok(window.jspdf.jsPDF) : falha(new Error('jsPDF')); };
+    s.onerror = function(){ jsPdfCarregando = null; falha(new Error('Não foi possível carregar o gerador de PDF.')); };
+    document.head.appendChild(s);
+  });
+  return jsPdfCarregando;
+}
+/* As fontes padrão do PDF só têm o alfabeto latino (Windows-1252): acentos do português ok,
+   mas símbolos como ≈ e emojis precisam ser trocados para não sair lixo. */
+var CP1252_EXTRA = '€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ';
+function pdfTexto(s){
+  s = String(s == null ? '' : s);
+  if (s.normalize) s = s.normalize('NFC');
+  s = s.replace(/≈/g, '~').replace(/[  ]/g, ' ').replace(/[‐‑‒]/g, '-').replace(/→/g, '->');
+  var out = '';
+  for (var i = 0; i < s.length; i++){
+    var c = s.charAt(i), n = s.charCodeAt(i);
+    if (n >= 0xD800 && n <= 0xDBFF){ i++; continue; }            /* emoji e afins: remove */
+    if ((n >= 32 && n <= 126) || (n >= 160 && n <= 255) || CP1252_EXTRA.indexOf(c) >= 0 || c === '\n') out += c;
+    /* símbolos fora do alfabeto do PDF (emoji, setas…) são removidos */
+  }
+  return out.replace(/ {2,}/g, ' ').replace(/^ +| +$/gm, '');
+}
+function nomeArquivoReceita(r, ext){
+  var base = norm(r.nome).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50) || 'receita';
+  return base + ext;
+}
+function medirImagem(src){
+  return new Promise(function(ok){ var i = new Image(); i.onload = function(){ ok({ w: i.naturalWidth, h: i.naturalHeight }); }; i.onerror = function(){ ok(null); }; i.src = src; });
+}
+function gerarPdfReceita(r){
+  var f = fatorAtual(r), aj = Math.abs(f - 1) > 1e-9;
+  return Promise.all([carregarJsPDF(), r.foto ? medirImagem(r.foto) : Promise.resolve(null)]).then(function(res){
+    var JsPDF = res[0], dimFoto = res[1];
+    var doc = new JsPDF({ unit: 'mm', format: 'a4', compress: true });
+    var W = 210, H = 297, M = 18, larg = W - 2 * M, y = M, rodape = 14;
+    var COR = { texto: [28, 25, 23], sec: [87, 83, 78], muted: [140, 132, 122], ambar: [180, 110, 5], aviso: [180, 83, 9], linha: [231, 227, 219] };
+    function cor(c){ doc.setTextColor(c[0], c[1], c[2]); }
+    function fonte(est, tam){ doc.setFont('helvetica', est); doc.setFontSize(tam); }
+    function lh(tam){ return tam * 0.3528 * 1.35; }                /* altura de linha em mm */
+    function espaco(alt){ if (y + alt > H - M - rodape){ doc.addPage(); y = M; } }
+    function texto(str, x, est, tam, c, largura){
+      fonte(est, tam); cor(c);
+      var linhas = doc.splitTextToSize(pdfTexto(str), largura || larg);
+      linhas.forEach(function(l){ espaco(lh(tam)); doc.text(l, x, y + lh(tam) * 0.75); y += lh(tam); });
+    }
+    function regua(){ doc.setDrawColor(COR.linha[0], COR.linha[1], COR.linha[2]); doc.setLineWidth(0.3); doc.line(M, y, W - M, y); }
+
+    /* Cabeçalho */
+    texto(r.nome, M, 'bold', 22, COR.texto);
+    y += 1;
+    var meta = r.topico + '   •   ' + (aj ? 'Rende ~' + fmtNum(r.rendimentoQtd * f, 1) : 'Rende ' + fmtNum(r.rendimentoQtd)) + ' ' + r.rendimentoUnidade;
+    texto(meta, M, 'normal', 10, COR.sec);
+    if (aj) texto('Quantidades ajustadas (x' + fmtNum(f) + ' da receita original, que rende ' + fmtNum(r.rendimentoQtd) + ' ' + r.rendimentoUnidade + ')', M, 'italic', 9, COR.ambar);
+    y += 4;
+
+    /* Foto */
+    if (r.foto && dimFoto && dimFoto.w){
+      var fw = larg, fh = fw * dimFoto.h / dimFoto.w, maxH = 80;
+      if (fh > maxH){ fh = maxH; fw = fh * dimFoto.w / dimFoto.h; }
+      espaco(fh + 4);
+      try { doc.addImage(r.foto, 'JPEG', M, y, fw, fh); y += fh + 6; } catch(e){}
+    }
+
+    var multi = temPartes(r);
+    /* Ingredientes */
+    espaco(14); regua(); y += 5;
+    texto('Ingredientes', M, 'bold', 14, COR.texto); y += 1;
+    r.partes.forEach(function(p, k){
+      if (!p.ingredientes.length) return;
+      if (multi){ y += 2; espaco(lh(10) + lh(11)); texto(nomeParte(p, k).toUpperCase(), M, 'bold', 9.5, COR.ambar); y += 0.5; }
+      p.ingredientes.forEach(function(ing){
+        var c = calcularIngrediente(ing, f);
+        fonte('bold', 11);
+        var qtd = pdfTexto(c.textoQtd), xQ = M + 5, wQ = doc.getTextWidth(qtd + ' ');
+        fonte('normal', 11);
+        var nome = doc.splitTextToSize(pdfTexto(ing.nome), larg - 5 - wQ);
+        espaco(lh(11) * nome.length + (c.nota ? lh(9) : 0));
+        cor(COR.muted); doc.text('•', M + 1, y + lh(11) * 0.75);
+        fonte('bold', 11); cor(COR.texto); doc.text(qtd, xQ, y + lh(11) * 0.75);
+        fonte('normal', 11);
+        nome.forEach(function(l, i){ doc.text(l, xQ + wQ, y + lh(11) * 0.75); y += lh(11); });
+        if (c.nota) texto(c.nota, xQ, 'italic', 8.5, c.alerta ? COR.aviso : COR.muted, larg - 5);
+        y += 0.8;
+      });
+    });
+
+    /* Modo de preparo */
+    if (totalPassos(r)){
+      y += 4; espaco(14); regua(); y += 5;
+      texto('Modo de preparo', M, 'bold', 14, COR.texto); y += 1;
+      r.partes.forEach(function(p, k){
+        if (!p.passos.length) return;
+        if (multi){ y += 2; espaco(lh(10) + lh(11)); texto(nomeParte(p, k).toUpperCase(), M, 'bold', 9.5, COR.ambar); y += 0.5; }
+        p.passos.forEach(function(s, i){
+          fonte('normal', 11);
+          var linhas = doc.splitTextToSize(pdfTexto(s), larg - 9);
+          espaco(lh(11) * Math.min(linhas.length, 3));
+          fonte('bold', 11); cor(COR.ambar); doc.text((i + 1) + '.', M + 1, y + lh(11) * 0.75);
+          fonte('normal', 11); cor(COR.texto);
+          linhas.forEach(function(l){ espaco(lh(11)); doc.text(l, M + 9, y + lh(11) * 0.75); y += lh(11); });
+          y += 1.8;
+        });
+      });
+    }
+
+    /* Rodapé em todas as páginas */
+    var total = doc.getNumberOfPages(), quando = new Date().toLocaleDateString('pt-BR');
+    for (var pg = 1; pg <= total; pg++){
+      doc.setPage(pg); fonte('normal', 8); cor(COR.muted);
+      doc.text(pdfTexto('Conversor de Receitas  •  ' + quando), M, H - 10);
+      doc.text(pdfTexto('Página ' + pg + ' de ' + total), W - M, H - 10, { align: 'right' });
+    }
+    doc.setProperties({ title: pdfTexto(r.nome), creator: 'Conversor de Receitas v' + APP_VERSION });
+    return doc;
+  });
+}
+function baixarBlob(blob, nome){
+  var url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = nome; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+}
+function pdfAcao(r, modo){
+  toast('Gerando PDF…');
+  gerarPdfReceita(r).then(function(doc){
+    var nome = nomeArquivoReceita(r, '.pdf'), blob = doc.output('blob');
+    if (modo === 'share'){
+      var file = new File([blob], nome, { type: 'application/pdf' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })){
+        navigator.share({ files: [file], title: r.nome }).catch(function(e){
+          if (e && e.name === 'AbortError') return;
+          baixarBlob(blob, nome); toast('PDF baixado');
+        });
+        return;
+      }
+    }
+    baixarBlob(blob, nome); toast('PDF baixado');
+  }, function(e){ toast((e && e.message) || 'Não foi possível gerar o PDF.', 'err'); });
+}
+function podeImprimir(){ return typeof window.print === 'function'; }
+function imprimirReceita(){
+  document.body.className += ' printing';
+  setTimeout(function(){
+    try { window.print(); } catch(e){ toast('Este aparelho não abriu a impressão. Use "Baixar PDF".', 'err'); }
+    setTimeout(function(){ document.body.className = document.body.className.replace(' printing', ''); }, 500);
+  }, 50);
+}
+function menuExportar(r){
+  var opcoes = [];
+  if (podeCompartilharArquivo()) opcoes.push(['pdf-share', 'file-text', 'Enviar PDF', 'WhatsApp, e-mail, Drive, Bluetooth…']);
+  opcoes.push(['pdf-download', 'download', 'Baixar PDF', 'Salva o arquivo no aparelho']);
+  if (podeImprimir()) opcoes.push(['print', 'printer', 'Imprimir', 'Abre a impressão do sistema (também salva como PDF)']);
+  opcoes.push(['share-text', 'message', 'Enviar como texto', 'Cola em qualquer conversa']);
+  var aj = Math.abs(fatorAtual(r) - 1) > 1e-9;
+  var root = document.getElementById('modalRoot');
+  root.innerHTML = '<div class="modal-overlay" id="modalOverlay"><div class="modal-panel" role="dialog" aria-modal="true">' +
+    '<div class="modal-head">Compartilhar receita</div>' +
+    '<div class="modal-body">' + (aj ? 'Sai com as <strong>quantidades convertidas</strong> (×' + esc(fmtNum(fatorAtual(r))) + ').' : 'Sai com as quantidades originais.') + '</div>' +
+    '<div class="sheet-list">' + opcoes.map(function(o){
+      return '<button class="sheet-item" data-sheet="' + o[0] + '"><span class="sheet-ico">' + ico(o[1]) + '</span><span><b>' + o[2] + '</b><small>' + o[3] + '</small></span></button>';
+    }).join('') + '</div>' +
+    '<div class="modal-foot"><button class="btn btn-ghost" id="modalCancel">Fechar</button></div></div></div>';
+  function fechar(){ root.innerHTML = ''; }
+  document.getElementById('modalCancel').onclick = fechar;
+  document.getElementById('modalOverlay').onclick = function(e){ if (e.target.id === 'modalOverlay') fechar(); };
+  Array.prototype.slice.call(root.querySelectorAll('[data-sheet]')).forEach(function(b){
+    b.onclick = function(){
+      var a = b.getAttribute('data-sheet'); fechar();
+      if (a === 'pdf-share') pdfAcao(r, 'share');
+      else if (a === 'pdf-download') pdfAcao(r, 'download');
+      else if (a === 'print') imprimirReceita();
+      else compartilhar(r);
+    };
+  });
 }
 
 /* --- Compartilhar receita --- */
@@ -1567,7 +1920,10 @@ function acao(act, el){
       setTimeout(function(){ var n = document.getElementById('fNome'); if (n){ n.focus(); try { n.select(); } catch(e){} } }, 0);
       break;
     case 'cancel-clone': go('detail', { recipeId: state.recipeId }, false); break;
-    case 'share': if (r) compartilhar(r); break;
+    case 'share': if (r) menuExportar(r); break;
+    case 'drive-save': driveExecutar('save'); break;
+    case 'drive-restore': driveExecutar('restore'); break;
+    case 'drive-logout': driveSair(); break;
     case 'delete':
       if (!r) break;
       confirmModal({ title: 'Excluir receita?', text: '"' + r.nome + '" será apagada deste aparelho. Isso não pode ser desfeito.', ok: 'Excluir', danger: true }, function(){
@@ -1645,8 +2001,14 @@ function acao(act, el){
 document.getElementById('appLogo').innerHTML = ico('cup');
 document.getElementById('footer').innerHTML = 'Conversor de Receitas · v' + APP_VERSION;
 applyThemeUI();
-try { history.replaceState({ v: 'home', t: null, r: null }, ''); } catch(e){}
+var retornoDrive = driveRetorno();
+if (retornoDrive) state.view = 'backup';
+try { history.replaceState({ v: state.view, t: null, r: null }, ''); } catch(e){}
 render();
+if (retornoDrive){
+  if (retornoDrive.erro) toast(retornoDrive.erro, 'err');
+  else if (retornoDrive.acao) driveExecutar(retornoDrive.acao, true);
+}
 function medirBarra(){ var t = document.querySelector('.tabs-wrap'); if (t) document.documentElement.style.setProperty('--nav-h', t.offsetHeight + 'px'); }
 medirBarra(); window.addEventListener('resize', medirBarra);
 try { if (!localStorage.getItem(STORE_KEY)) saveData(); } catch(e){}
